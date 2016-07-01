@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
+<!-- 2016-05-18T15:04:57 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="annual_review" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="756" leftMargin="18" rightMargin="18" topMargin="18" bottomMargin="18" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="net.sf.jasperreports.print.create.bookmarks" value="false"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="lvqa1"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date"/>
+	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
+	<parameter name="STUDY_ID" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\\\duhsnas-pri\\home\\bchesnut\\Projects\\Duke Biobank\\LabVantage\\iReports\\Reports\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select s.studydesc, 
+       s.completeddt,
+       cp.withdrawdt,
+       p.sstudyid,
+       p.s_participantid,
+       p.externalparticipantid,
+       p.participantstatus,
+       c.consentdesc,
+       cp.consentflag,
+       cp.consenteddt,
+       cp.consenter,
+       a.firstname,
+       a.lastname,
+       cp.refusalreason,
+       cp.consentedfor,
+       d.departmentdesc,
+       sysuser.sysuserdesc
+  from s_participant p
+    left outer join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+    left outer join u_consent c on c.u_consentid = cp.consentid
+    join s_study s on s.s_studyid = p.sstudyid
+    join department d on s.securitydepartment = d.departmentid
+    join departmentsysuser dsu on dsu.departmentid = d.departmentid
+    join sysuser on sysuser.sysuserid = dsu.sysuserid
+    left outer join address a on a.addressid = cp.consenter
+ where dsu.sysuserid =  $P{SAPPHIRE_CurrentUser} 
+      and instr( $P{STUDY_ID}  || ';', p.sstudyid || ';') > 0
+      and cp.consenteddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+ order by s.studydesc,
+          p.externalparticipantid]]>
+	</queryString>
+	<field name="STUDYDESC" class="java.lang.String"/>
+	<field name="COMPLETEDDT" class="java.sql.Timestamp"/>
+	<field name="WITHDRAWDT" class="java.sql.Timestamp"/>
+	<field name="SSTUDYID" class="java.lang.String"/>
+	<field name="S_PARTICIPANTID" class="java.lang.String"/>
+	<field name="EXTERNALPARTICIPANTID" class="java.lang.String"/>
+	<field name="PARTICIPANTSTATUS" class="java.lang.String"/>
+	<field name="CONSENTDESC" class="java.lang.String"/>
+	<field name="CONSENTFLAG" class="java.lang.String"/>
+	<field name="CONSENTEDDT" class="java.sql.Timestamp"/>
+	<field name="CONSENTER" class="java.lang.String"/>
+	<field name="FIRSTNAME" class="java.lang.String"/>
+	<field name="LASTNAME" class="java.lang.String"/>
+	<field name="REFUSALREASON" class="java.lang.String"/>
+	<field name="CONSENTEDFOR" class="java.lang.String"/>
+	<field name="DEPARTMENTDESC" class="java.lang.String"/>
+	<field name="SYSUSERDESC" class="java.lang.String"/>
+	<variable name="CONSENTFLAG_YES" class="java.lang.Integer" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[($F{CONSENTFLAG}.equalsIgnoreCase( "yes" )) ? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="CONSENTFLAG_NO" class="java.lang.Integer" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[($F{CONSENTFLAG}.equalsIgnoreCase( "no" )) ? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="CONSENTFLAG_ASSENT" class="java.lang.Integer" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{CONSENTFLAG}.equalsIgnoreCase("Assent")?1:0]]></variableExpression>
+	</variable>
+	<variable name="CONSENTFLAG_RECONSENT" class="java.lang.Integer" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{CONSENTFLAG}.equalsIgnoreCase("Reconsent")?1:0]]></variableExpression>
+	</variable>
+	<variable name="CONSENTFLAG_WAIVER" class="java.lang.Integer" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{CONSENTFLAG}.equalsIgnoreCase("Waiver")?1:0]]></variableExpression>
+	</variable>
+	<variable name="CONSENTFLAG_PATIENTDEATH" class="java.lang.Integer" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{CONSENTFLAG}.equalsIgnoreCase("Patient Death")?1:0]]></variableExpression>
+	</variable>
+	<group name="Group1">
+		<groupExpression><![CDATA[$F{STUDYDESC}]]></groupExpression>
+		<groupHeader>
+			<band height="221">
+				<textField evaluationTime="Group" evaluationGroup="Group1">
+					<reportElement x="0" y="88" width="270" height="14" uuid="8adb36f6-5b87-4f1f-9c08-09e9f47eb090">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA["Total Consents Yes:" + $V{CONSENTFLAG_YES}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group1">
+					<reportElement x="0" y="102" width="270" height="14" uuid="527f8fbf-e807-4668-80c0-99e0ac69bc39">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA["Total Consents No: " + $V{CONSENTFLAG_NO}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group1">
+					<reportElement x="0" y="116" width="270" height="14" uuid="f71ab993-af47-45a2-b980-5f47e0533798"/>
+					<textFieldExpression><![CDATA["Total Consents Assent:" + $V{CONSENTFLAG_ASSENT}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group1">
+					<reportElement x="0" y="130" width="270" height="14" uuid="5cb1b0a3-8246-4f9a-8464-abd4e81b645a"/>
+					<textFieldExpression><![CDATA["Total Consents Reconsent: " + $V{CONSENTFLAG_RECONSENT}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group1">
+					<reportElement x="0" y="144" width="270" height="14" uuid="2f355702-ac0a-4c1e-8345-08b4bbaaa7a3"/>
+					<textFieldExpression><![CDATA["Total Consents Waiver:" + $V{CONSENTFLAG_WAIVER}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group1">
+					<reportElement x="0" y="160" width="270" height="14" uuid="1fc42230-28cf-4a7a-9a63-b14c08f24076">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA["Total Consents Patient Death: " + $V{CONSENTFLAG_PATIENTDEATH}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="180" width="751" height="1" uuid="0eb4ad50-fa5c-4e80-8f58-b1f6c3669d33"/>
+				</line>
+				<staticText>
+					<reportElement x="2" y="187" width="287" height="20" uuid="5891f210-7454-4239-af08-48c5a4519a69"/>
+					<textElement>
+						<font size="11" isBold="false"/>
+					</textElement>
+					<text><![CDATA[List of External Participants who withdrew consent:]]></text>
+				</staticText>
+				<line>
+					<reportElement x="3" y="80" width="751" height="1" uuid="c34b9666-34dc-40bf-8ab3-754803bc69ed"/>
+				</line>
+				<subreport>
+					<reportElement x="2" y="0" width="200" height="37" uuid="48a4517c-5b8a-4050-a0b7-6849cc8934e1"/>
+					<subreportParameter name="STUDY_ID">
+						<subreportParameterExpression><![CDATA[$P{STUDY_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_CurrentUser">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_CurrentUser}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_ReportRoot">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_ReportRoot}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_ReportPath">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_ReportPath}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_SDCID">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_SDCID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_KEYID1List">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_KEYID1List}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_KEYID1">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_KEYID1}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_KEYID2">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_KEYID2}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_KEYID3">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_KEYID3}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_ReportID">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_ReportID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_ReportVersion">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_ReportVersion}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_ReportTitle">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_ReportTitle}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_DatabaseName">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_DatabaseName}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_ReportEventID">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_ReportEventID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_START_DATE">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_START_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_END_DATE">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_END_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cr_bb_brpc_subreport_externalparticipantstatus.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="0" y="200" width="200" height="20" uuid="3878e1b9-1382-4c28-936f-423a5cdbe9c7"/>
+					<subreportParameter name="STUDY_ID">
+						<subreportParameterExpression><![CDATA[$P{STUDY_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_START_DATE">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_START_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_END_DATE">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_END_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cr_bb_brpc_subreport_extparticipantwithdraws.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="134" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText" x="0" y="3" width="756" height="40" uuid="ea333cfd-5f54-4c35-8ecb-4739cba897c0"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data for IRB Annual Continuing Review]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line" positionType="FixRelativeToBottom" x="0" y="46" width="756" height="1" forecolor="#000000" uuid="ac089da8-463d-4e49-9231-b6ba882252c0"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line" x="0" y="1" width="756" height="1" forecolor="#000000" uuid="0ccb2e14-c858-4b64-b5da-720c3fb09f8b"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<image scaleImage="RealSize" isUsingCache="false">
+				<reportElement key="image-1" x="0" y="5" width="139" height="36" uuid="9aca5bd1-2744-4b89-a4c7-bf62a2eaf2d4"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{SAPPHIRE_ReportPath}+"/images/CoreResearchLogo_wt.png"]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textReport" x="0" y="95" width="370" height="14" uuid="bb266ea7-e72d-42a4-ae73-f3b808fa439b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Consent Date Range: " + new SimpleDateFormat("MM/dd/yyyy").format($P{SAPPHIRE_START_DATE}) + " to " + new SimpleDateFormat("MM/dd/yyyy").format($P{SAPPHIRE_END_DATE})]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textCurrentDate" x="0" y="53" width="370" height="14" uuid="5b9889e1-7871-4f3f-a83d-4098057834f5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generation Date: " + $P{REPORT_SCRIPTLET}.formatDate(new Date(),2,2)]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textCurrentUser" x="0" y="67" width="370" height="14" uuid="ce03abd9-dac2-4074-b915-ae4e14f39876"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generated By: " + $P{SAPPHIRE_CurrentUser}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textCurrentUser" x="0" y="81" width="370" height="14" uuid="91298631-27ca-4be5-9991-8f6c9fd5278d"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Core Name: " + $F{DEPARTMENTDESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="110" width="370" height="15" uuid="7767f993-d6a5-44eb-b03d-22895e0ff969">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA["Study Name: " + $F{STUDYDESC}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="130" width="751" height="1" uuid="67721fe1-46e9-46cb-b9af-786827959f91"/>
+			</line>
+		</band>
+	</pageHeader>
+	<detail>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textPageNumber" x="610" y="2" width="109" height="14" uuid="13183c93-1c6b-47e9-bd15-182efb7b12fe"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement key="textTotalPages" x="719" y="2" width="36" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="97a2993f-1189-46f0-8311-732064aba4bb"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line" x="0" y="1" width="756" height="1" forecolor="#000000" uuid="2c06b7c8-e365-439c-843e-5efa14f8117d"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

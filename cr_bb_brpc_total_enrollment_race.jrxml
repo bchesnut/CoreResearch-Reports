@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-03-24T16:38:40 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_brpc_total_enrollment_ethnicity" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="lvqa1"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date"/>
+	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
+	<parameter name="STUDY_ID" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\\\duhsnas-pri\\home\\bchesnut\\Projects\\Duke Biobank\\LabVantage\\iReports\\Reports\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select race,
+       sum(case when gender = 'F' then nvl(gender_count, 0) else 0 end) as female,
+       sum(case when gender = 'M' then nvl(gender_count, 0) else 0 end) as male,
+       sum(case when gender not in ('F','M')  then nvl(gender_count, 0) else 0 end) as unknown_gender
+  from (
+    select decode(race_gender.r_refvalue,
+             'American Indian/Alaska Native',         'American Indian/Alaska Native',
+             'Alaskan Native',                        'American Indian/Alaska Native',
+             'American Indian',                       'American Indian/Alaska Native',
+             'Black/African American',                'Black/African American',
+             'Black or African American',             'Black/African American',
+             'Asian',                                 'Asian',
+             'Caucasian',                             'White',
+             'White',                                 'White',
+             'White or Caucasian',                    'White',
+             'Native Hawaiin/Other Pacific Islander', 'Native Hawaiin/Other Pacific Islander',
+             'Hawaii-Pacific',                        'Native Hawaiin/Other Pacific Islander',
+             'Declined',                              'Unknown or not reported',
+             'Other',                                 'Unknown or not reported',
+             'Unknown',                               'Unknown or not reported',
+             'Unavailable',                           'Unknown or not reported',
+             'Hispanic',                              'Unknown or not reported',
+             'Multiracial',                           'More than one race',
+             'MultiRacial',                           'More than one race',
+             'Unknown or not reported'
+           ) as race,
+           race_gender.g_refvalue as gender,
+           race_counts.gender_count
+      from 
+         (select rv_race.reftypeid     as r_reftypeid,
+                 rv_race.refvalueid    as r_refvalue,
+                 rv_gender.reftypeid   as g_reftypeid,
+                 rv_gender.refvalueid  as g_refvalue
+            from refvalue rv_race, 
+                 refvalue rv_gender
+           where rv_race.reftypeid = 'EMRRace'
+             and rv_gender.reftypeid = 'Gender'
+         ) race_gender
+         left outer join
+         (select gender,
+                 race,
+                 count(*) as gender_count
+            from (
+              select nvl(p.u_genderflag, 'U') as gender,
+                     nvl(p.u_emrrace, 'Unavailable') as race
+                from s_participant p
+               where p.sstudyid = $P{STUDY_ID}
+                 and p.enrolldt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+              )
+           group by gender,
+                    race
+          ) race_counts on race_counts.race = race_gender.r_refvalue 
+             and race_counts.gender = race_gender.g_refvalue
+    )
+ group by race
+ order by 1
+]]>
+	</queryString>
+	<field name="RACE" class="java.lang.String"/>
+	<field name="FEMALE" class="java.math.BigDecimal"/>
+	<field name="MALE" class="java.math.BigDecimal"/>
+	<field name="UNKNOWN_GENDER" class="java.math.BigDecimal"/>
+	<variable name="FEMALE1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{FEMALE}]]></variableExpression>
+	</variable>
+	<variable name="MALE1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{MALE}]]></variableExpression>
+	</variable>
+	<variable name="UNKNOWN_GENDER1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{UNKNOWN_GENDER}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{FEMALE}.add($F{MALE}).add($F{UNKNOWN_GENDER})]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<staticText>
+				<reportElement x="0" y="16" width="221" height="14" uuid="2d3d43f3-7aa5-436c-ab45-17cc1f58ae43">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Race Category]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="221" y="16" width="70" height="14" uuid="ad8632c6-da32-4bdf-a3bb-8b46f67f270c"/>
+				<text><![CDATA[Females]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="291" y="16" width="70" height="14" uuid="a9814ec3-0455-4d71-8a59-689452c4e54c"/>
+				<text><![CDATA[Males]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="361" y="4" width="70" height="26" uuid="42c23ce4-8e5d-4a90-8ed7-853603aa941b"/>
+				<text><![CDATA[Unknown or
+not reported]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="431" y="16" width="70" height="14" uuid="17b22af0-4e0d-4819-b6e6-4d71105744ca"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="33" width="513" height="1" uuid="ab8025bd-3835-46c1-8485-4eb0a731a765">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="221" height="14" uuid="429d2858-f8fc-4c0f-ba89-5fa43ba0785b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{RACE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="221" y="0" width="70" height="14" uuid="a0312ac9-277f-402d-8110-7d5ad0310baa"/>
+				<textFieldExpression><![CDATA[$F{FEMALE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="291" y="0" width="70" height="14" uuid="09806e40-5e3d-4e5e-acc1-7c90ffd86d10"/>
+				<textFieldExpression><![CDATA[$F{MALE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="361" y="0" width="70" height="14" uuid="66d86d47-26f7-4ab9-ab47-67cbd5524edd"/>
+				<textFieldExpression><![CDATA[$F{UNKNOWN_GENDER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="431" y="0" width="70" height="14" uuid="e02dbb58-071d-4007-ae64-6282b4f87b91"/>
+				<textFieldExpression><![CDATA[$F{FEMALE}.add($F{MALE}).add($F{UNKNOWN_GENDER})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="24" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField>
+				<reportElement x="221" y="5" width="70" height="14" uuid="81e76597-8d86-4c9e-a83e-182ab8b93fc9">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$V{FEMALE1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="291" y="5" width="70" height="14" uuid="e311f05d-6f9c-49e6-891a-7dd9f83def66"/>
+				<textFieldExpression><![CDATA[$V{MALE1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="361" y="5" width="70" height="14" uuid="eb9a2eb9-d493-4696-90e4-f15beb4bfb51"/>
+				<textFieldExpression><![CDATA[$V{UNKNOWN_GENDER1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="431" y="5" width="70" height="14" uuid="40be347b-b0f5-499f-8814-65e81c469ee3"/>
+				<textFieldExpression><![CDATA[$V{TOTAL1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="2" width="513" height="1" uuid="e51f0b3d-0a39-4401-8cf3-99ad1b5a9409">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="5" width="221" height="14" uuid="377c5773-7798-4e06-a1a6-2cb9f6ca453a">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Total All Participants]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

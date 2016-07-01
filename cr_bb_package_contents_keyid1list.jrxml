@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bb_package_contents" pageWidth="792" pageHeight="612" columnWidth="756" leftMargin="18" rightMargin="18" topMargin="18" bottomMargin="18" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="QUERY_PACKAGE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select pkg.s_packageid,
+       pkg.packagedesc,
+       p.s_participantid,
+       p.externalparticipantid,
+       p.sstudyid,
+       st.studydesc,
+       pe.eventlabel,
+       s.samplepointid,
+       s.s_sampleid,
+       sb.altsampleid,
+       s.u_sponsorid,
+       s.sampletypeid,
+       s.specimentype,
+       s.preptypeid,
+       (select listagg(t.detailkeyid1,',') within group (order by t.detailkeyid1)
+         from s_sampledetail t
+        where t.s_sampleid = s.s_sampleid) additive_type,
+       ti.qtycurrent,
+       ti.qtyunits,
+       i.boxid,
+       i.boxposition
+  from v_samplepackageitems i
+    inner join s_package pkg              on i.packageid = pkg.s_packageid
+    inner join s_sample s                 on i.sampleid = s.s_sampleid
+    left outer join trackitem ti          on s.s_sampleid = ti.linkkeyid1 and ti.linksdcid = 'Sample'
+    left outer join s_sampledetail sd     on s.s_sampleid = sd.s_sampleid
+    left outer join s_samplefamily sf     on s.samplefamilyid = sf.s_samplefamilyid
+    left outer join s_participant p       on sf.participantid = p.s_participantid
+    left outer join s_study st            on st.s_studyid = p.sstudyid
+    left outer join s_participantevent pe on sf.participantid = pe.participantid and sf.participanteventid = pe.s_participanteventid
+    left outer join s_restrictclass rc    on sf.restrictclassid = rc.s_restrictclassid
+    left outer join u_samplebank sb       on s.s_sampleid = sb.sampleid
+    left outer join sysuser               on sb.bankid = sysuser.defaultdepartment and sysuser.sysuserid =  $P{SAPPHIRE_CurrentUser}
+ where i.packageid in ($P!{SAPPHIRE_KEYID1List})
+   and exists (
+     select *
+       from JOBTYPEDEPARTMENT jd
+         inner join SYSUSERJOBTYPE uj        on jd.jobtypeid        = uj.jobtypeid
+         inner join SYSUSER u                on uj.sysuserid        = u.sysuserid
+      where (jd.departmentid = pkg.senderdepartmentid or jd.departmentid = pkg.recipientdepartmentid)
+        and u.sysuserid     = $P{SAPPHIRE_CurrentUser}
+     )
+ order by pkg.s_packageid,
+          p.sstudyid,
+          p.s_participantid,
+          pe.eventlabel,
+          s.samplepointid,
+          s.s_sampleid]]>
+	</queryString>
+	<field name="S_PACKAGEID" class="java.lang.String"/>
+	<field name="PACKAGEDESC" class="java.lang.String"/>
+	<field name="S_PARTICIPANTID" class="java.lang.String"/>
+	<field name="EXTERNALPARTICIPANTID" class="java.lang.String"/>
+	<field name="SSTUDYID" class="java.lang.String"/>
+	<field name="STUDYDESC" class="java.lang.String"/>
+	<field name="EVENTLABEL" class="java.lang.String"/>
+	<field name="SAMPLEPOINTID" class="java.lang.String"/>
+	<field name="S_SAMPLEID" class="java.lang.String"/>
+	<field name="ALTSAMPLEID" class="java.lang.String"/>
+	<field name="U_SPONSORID" class="java.lang.String"/>
+	<field name="SAMPLETYPEID" class="java.lang.String"/>
+	<field name="SPECIMENTYPE" class="java.lang.String"/>
+	<field name="PREPTYPEID" class="java.lang.String"/>
+	<field name="ADDITIVE_TYPE" class="java.lang.String"/>
+	<field name="QTYCURRENT" class="java.math.BigDecimal"/>
+	<field name="QTYUNITS" class="java.lang.String"/>
+	<field name="BOXID" class="java.lang.String"/>
+	<field name="BOXPOSITION" class="java.lang.String"/>
+	<group name="CORE">
+		<groupExpression><![CDATA[$F{S_PACKAGEID}]]></groupExpression>
+		<groupHeader>
+			<band height="22" splitType="Stretch">
+				<textField>
+					<reportElement x="1" y="0" width="575" height="16" uuid="f9da0908-f0b4-41b2-9bb0-cf2e4285fba5"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{S_PACKAGEID} + ($F{PACKAGEDESC} != null ? ": " + $F{PACKAGEDESC} : "")]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18" splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<group name="Study">
+		<groupExpression><![CDATA[$F{SSTUDYID}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<staticText>
+					<reportElement x="1" y="22" width="60" height="12" uuid="a12c2707-7228-4989-97d9-f93640b896bb"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Participant ID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="61" y="22" width="80" height="12" uuid="6d5ed15d-814b-4133-94c6-b3b24aa999a1"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Ext Participant ID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="141" y="22" width="100" height="12" uuid="c26eccc9-f85c-4940-91c7-af42b8e7469e"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Visit Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="241" y="22" width="35" height="12" uuid="bf12c0c3-0493-4f9b-b60c-dc0c191965da"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Timept]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="276" y="22" width="60" height="12" uuid="c836a3fd-d3ba-4bbd-912c-2f38c960e258"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[LV Sample ID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="336" y="22" width="80" height="12" uuid="fec634ca-bca8-4c5c-b9c2-5b438ac2c3a3"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Alternate Sample ID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="416" y="22" width="80" height="12" uuid="977ca8ef-4b3f-46d4-bf96-1976e50cbcc4"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Sponsor Sample ID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="496" y="22" width="60" height="12" uuid="28c2c8aa-ada1-4e11-92c5-ac81982f6aaf"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Sample type]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="556" y="22" width="60" height="12" uuid="facdea10-9c5f-4b2c-bebb-d32a221587bd"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Processing]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="616" y="22" width="60" height="12" uuid="59581bc0-edc9-43e8-a0a0-51934cd31a9d"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Additive]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="676" y="22" width="32" height="12" uuid="d4ebd844-32b3-441f-8282-2c24b8e9e617"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="708" y="22" width="32" height="12" uuid="a8e209f9-e337-48ea-9695-e5285a3c7a7f"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Units]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="16" y="0" width="575" height="16" uuid="85156f1a-eb23-4130-b9f8-d3f4dab1bd80"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SSTUDYID} + ($F{STUDYDESC} != null ? ": " + $F{STUDYDESC} : "")]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement positionType="Float" x="1" y="34" width="740" height="1" uuid="a0ba016c-3aee-4d74-b6fe-9150620effb9"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="7"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="60" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText" x="139" y="9" width="437" height="36" uuid="ea333cfd-5f54-4c35-8ecb-4739cba897c0"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Package Content Details]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line" positionType="FixRelativeToBottom" x="0" y="46" width="740" height="1" forecolor="#000000" uuid="ac089da8-463d-4e49-9231-b6ba882252c0"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line" x="0" y="1" width="740" height="1" forecolor="#000000" uuid="0ccb2e14-c858-4b64-b5da-720c3fb09f8b"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<image scaleImage="RealSize" isUsingCache="false">
+				<reportElement key="image-1" x="0" y="5" width="139" height="36" uuid="9aca5bd1-2744-4b89-a4c7-bf62a2eaf2d4"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{SAPPHIRE_ReportPath}+"/images/CoreResearchLogo_wt.png"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="10" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1" y="0" width="60" height="12" uuid="d8880f28-36af-49eb-8f87-17c74263ebed"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{S_PARTICIPANTID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="61" y="0" width="80" height="12" uuid="477d3989-b873-42b9-978c-3fc1272075f2"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EXTERNALPARTICIPANTID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="141" y="0" width="100" height="12" uuid="51d7d146-4db2-43ce-b224-f005225dbcc2"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EVENTLABEL}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="241" y="0" width="35" height="12" uuid="80ad365a-befa-47a9-8d95-9487f87d3238"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SAMPLEPOINTID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="276" y="0" width="60" height="12" uuid="6a8b6bbb-2fb0-4ac4-b011-89fef63736a6"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{S_SAMPLEID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="336" y="0" width="80" height="12" uuid="3c25e658-c62e-4450-b4d7-26a67b02a779"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ALTSAMPLEID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="416" y="0" width="80" height="12" uuid="9e533a6a-34c7-459f-9694-7a2a077b2fac"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{U_SPONSORID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="496" y="0" width="60" height="12" uuid="cb5110b5-076f-45dd-9e3b-b4f545f49aeb"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SAMPLETYPEID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="616" y="0" width="60" height="12" uuid="1ac2edb3-5092-4c03-9767-eab25d393ad5"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ADDITIVE_TYPE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="676" y="0" width="32" height="12" uuid="b5cbea89-d7cc-4be0-bec6-da1d4fdb992a"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTYCURRENT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="708" y="0" width="32" height="12" uuid="62c27899-9433-4554-82cd-3692e23e0cb8"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTYUNITS}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="556" y="0" width="60" height="12" uuid="d12555e3-b7fa-4ec4-87fb-1c97bd0800e8"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PREPTYPEID}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textPageNumber" x="594" y="2" width="109" height="14" uuid="13183c93-1c6b-47e9-bd15-182efb7b12fe"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement key="textTotalPages" x="703" y="2" width="36" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="97a2993f-1189-46f0-8311-732064aba4bb"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line" x="0" y="1" width="740" height="1" forecolor="#000000" uuid="2c06b7c8-e365-439c-843e-5efa14f8117d"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textCurrentDate" x="143" y="16" width="208" height="14" uuid="5b9889e1-7871-4f3f-a83d-4098057834f5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["On " + $P{REPORT_SCRIPTLET}.formatDate(new Date(),2,2)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textCurrentUser" x="143" y="2" width="127" height="14" uuid="ce03abd9-dac2-4074-b915-ae4e14f39876"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generated By " + $P{SAPPHIRE_CurrentUser}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textReport" x="1" y="2" width="127" height="14" uuid="37f6d17a-b689-4896-b064-d1168eb50ec7"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Report " + $P{SAPPHIRE_ReportID} + " v" + $P{SAPPHIRE_ReportVersion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textDatabase" x="1" y="16" width="127" height="14" uuid="c28991cf-2cba-43c2-bd90-c2e1e88907b6"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Database " + $P{SAPPHIRE_DatabaseName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="648" y="16" width="91" height="14" uuid="70a26782-fcff-4f1e-a719-de8c89219ea5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SAPPHIRE_ReportEventID}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

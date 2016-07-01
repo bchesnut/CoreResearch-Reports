@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-06-15T10:55:10 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_brpc_histological_review" pageWidth="2412" pageHeight="612" orientation="Landscape" columnWidth="2412" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="lvqa1"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[select p.externalparticipantid,
+       s.s_sampleid,
+       s.u_sponsorid,
+       s.sampletypeid,
+       rc.restrictclassdesc,
+       su.labelpath,
+       anat_site.tissue_desc as anatomic_site,
+       body_site.tissue_desc as body_site,
+       sf.u_grossappearance,
+       sf.u_tissuecount,
+       s.u_processingdelay,
+       sf.u_dimension,
+       s.u_histologicdiag,
+       s.u_percenttumornuclei,
+       s.u_percentnecrosis,
+       s.collectiondt,
+       d.departmentdesc,
+       sysuser.sysuserdesc
+  from s_samplefamily sf
+    join s_participant p on p.s_participantid = sf.participantid
+    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
+    join u_samplebank sb on sb.sampleid = s.s_sampleid
+    join s_study st on st.s_studyid = sf.sstudyid
+    join department d on d.departmentid = st.securitydepartment
+    join departmentsysuser dsu on dsu.departmentid = d.departmentid
+    join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid
+    left outer join trackitem t on t.linksdcid = 'Sample' and t.linkkeyid1 = s.s_sampleid
+    left outer join storageunit su on su.storageunitid = t.currentstorageunitid
+    left outer join v_duke_tissuetree anat_site on anat_site.s_tissueid = sf.tissueid
+    left outer join v_duke_tissuetree body_site on body_site.s_tissueid = s.u_bodysiteoforigin
+    left outer join s_restrictclass rc on rc.s_restrictclassid = sf.restrictclassid
+ where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and s.s_sampleid in ($P!{SAPPHIRE_KEYID1List})
+ order by
+       p.externalparticipantid,
+       s.s_sampleid]]>
+	</queryString>
+	<field name="EXTERNALPARTICIPANTID" class="java.lang.String"/>
+	<field name="S_SAMPLEID" class="java.lang.String"/>
+	<field name="U_SPONSORID" class="java.lang.String"/>
+	<field name="SAMPLETYPEID" class="java.lang.String"/>
+	<field name="RESTRICTCLASSDESC" class="java.lang.String"/>
+	<field name="LABELPATH" class="java.lang.String"/>
+	<field name="ANATOMIC_SITE" class="java.lang.String"/>
+	<field name="BODY_SITE" class="java.lang.String"/>
+	<field name="U_GROSSAPPEARANCE" class="java.lang.String"/>
+	<field name="U_TISSUECOUNT" class="java.math.BigDecimal"/>
+	<field name="U_PROCESSINGDELAY" class="java.math.BigDecimal"/>
+	<field name="U_DIMENSION" class="java.lang.String"/>
+	<field name="U_HISTOLOGICDIAG" class="java.lang.String"/>
+	<field name="U_PERCENTTUMORNUCLEI" class="java.math.BigDecimal"/>
+	<field name="U_PERCENTNECROSIS" class="java.math.BigDecimal"/>
+	<field name="COLLECTIONDT" class="java.sql.Timestamp"/>
+	<field name="DEPARTMENTDESC" class="java.lang.String"/>
+	<field name="SYSUSERDESC" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="107" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText" x="0" y="41" width="370" height="14" uuid="ea333cfd-5f54-4c35-8ecb-4739cba897c0">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Histological Review Report]]></text>
+			</staticText>
+			<image scaleImage="RealSize" isUsingCache="false">
+				<reportElement key="image-1" x="0" y="5" width="139" height="36" uuid="9aca5bd1-2744-4b89-a4c7-bf62a2eaf2d4"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{SAPPHIRE_ReportPath}+"/images/CoreResearchLogo_wt.png"]]></imageExpression>
+			</image>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textCurrentDate" x="0" y="55" width="370" height="14" uuid="5b9889e1-7871-4f3f-a83d-4098057834f5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generation Date: " + $P{REPORT_SCRIPTLET}.formatDate(new Date(),2,2)]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textCurrentUser" x="0" y="69" width="370" height="14" uuid="ce03abd9-dac2-4074-b915-ae4e14f39876"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generated By: " + $F{SYSUSERDESC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textCurrentUser" x="0" y="83" width="370" height="14" uuid="91298631-27ca-4be5-9991-8f6c9fd5278d"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Core Name: " + $F{DEPARTMENTDESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="37" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="7" width="80" height="28" uuid="221b3f8c-ba50-4320-a870-aa2f1bd757ed">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[External 
+Participant ID]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="36" width="2376" height="1" uuid="9660c0b3-db7d-4413-ac30-00322eef3361">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="80" y="21" width="100" height="14" uuid="31a706d4-a853-4aef-bc95-1310683859a9">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Sample ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="7" width="100" height="28" uuid="b5057c47-0190-431b-b224-09c54b71fa94"/>
+				<text><![CDATA[Sponsor
+Sample ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="21" width="100" height="14" uuid="5ca9b508-28c7-466b-9c89-0080c045e748"/>
+				<text><![CDATA[Sample Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="21" width="300" height="14" uuid="4ffdfefc-3f33-45ef-9f07-8a4c5e5cb097">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Working Group]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="680" y="21" width="400" height="14" uuid="b77daff9-83d9-43bc-b2a8-eaaa01dfbb2d">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Sample Location]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1080" y="21" width="300" height="14" uuid="4423e2ae-7922-4b07-b681-2dc3875f93b7">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Anatomic Site of Finding]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1380" y="21" width="300" height="14" uuid="14baa325-17bd-48cd-bb27-f1c874dc73ca">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Body Site of Origin]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1680" y="7" width="100" height="28" uuid="62d6a254-5158-41f4-98ed-fa1dd49a215f"/>
+				<text><![CDATA[Gross
+Appearance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1780" y="7" width="100" height="28" uuid="7e767d6e-7369-4a08-9d86-69d3f3d6548d"/>
+				<text><![CDATA[Number of
+Tissue Fragments]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1880" y="7" width="100" height="28" uuid="9647b898-d7c8-41ab-b23b-27d19a35290d"/>
+				<text><![CDATA[Cold Ischema
+Time (min)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1980" y="7" width="100" height="28" uuid="78cc05ea-d50d-464d-9994-eabbac71d4ab"/>
+				<text><![CDATA[Sample
+Dimensions]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2080" y="7" width="100" height="28" uuid="35b1fd35-c338-4a7f-807f-fc004059be45"/>
+				<text><![CDATA[Histologic
+Diagnosis]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2180" y="7" width="100" height="28" uuid="f718a31f-34e7-481f-b5ba-2111d55c0e2b"/>
+				<text><![CDATA[% Tumor
+Nuclei]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2280" y="21" width="100" height="14" uuid="4b931eaa-91ec-4872-8e87-59eca7862803"/>
+				<text><![CDATA[% Necrosis]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="80" height="14" uuid="98a8a249-ad52-443d-af91-95a9b9e64b68">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{EXTERNALPARTICIPANTID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="80" y="0" width="100" height="14" uuid="3de94b5b-d043-4d08-bb30-195fb7513461"/>
+				<textFieldExpression><![CDATA[$F{S_SAMPLEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="180" y="0" width="100" height="14" uuid="4d8813cb-ac61-4e73-8fb8-73ac0482151b"/>
+				<textFieldExpression><![CDATA[$F{U_SPONSORID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="280" y="0" width="100" height="14" uuid="b878bc77-f4a6-4d7a-b6d5-c5f8b19daeab"/>
+				<textFieldExpression><![CDATA[$F{SAMPLETYPEID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="380" y="0" width="300" height="14" uuid="5a51ebcc-a987-4e60-ae79-6531dbb9985b">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{RESTRICTCLASSDESC}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="680" y="0" width="400" height="14" uuid="1f546e11-da2a-4356-bba3-1ffa8e5a1157">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{LABELPATH}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1080" y="0" width="300" height="14" uuid="0788f38a-edbe-42b1-8991-604e65c69fed">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{ANATOMIC_SITE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1380" y="0" width="300" height="14" uuid="1ffeae7a-f46e-43b6-85e1-eef8f1c67a0b">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{BODY_SITE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1680" y="0" width="100" height="14" uuid="90888c78-4224-4eaa-97ca-a4ac55a939d0"/>
+				<textFieldExpression><![CDATA[$F{U_GROSSAPPEARANCE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1780" y="0" width="100" height="14" uuid="79e72ad8-4fd7-4ae2-8906-2e91806ed1e5"/>
+				<textFieldExpression><![CDATA[$F{U_TISSUECOUNT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1880" y="0" width="100" height="14" uuid="ee33cc83-5eb7-490d-9806-7471434b5cc3"/>
+				<textFieldExpression><![CDATA[$F{U_PROCESSINGDELAY}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1980" y="0" width="100" height="14" uuid="7e321f9f-b42c-4c4b-aab3-a5fae4a5a785"/>
+				<textFieldExpression><![CDATA[$F{U_DIMENSION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2080" y="0" width="100" height="14" uuid="1de6dbc3-d9d9-47c7-b989-e8b3484dbf65"/>
+				<textFieldExpression><![CDATA[$F{U_HISTOLOGICDIAG}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2180" y="0" width="100" height="14" uuid="ea344026-25b8-455b-849b-7421856c7e4e"/>
+				<textFieldExpression><![CDATA[$F{U_PERCENTTUMORNUCLEI}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2280" y="0" width="100" height="14" uuid="b22866fa-e04d-4aa4-b4f7-fa2a0c700400"/>
+				<textFieldExpression><![CDATA[$F{U_PERCENTNECROSIS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

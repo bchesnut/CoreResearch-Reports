@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-04-14T14:22:14 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_consent" pageWidth="1222" pageHeight="612" orientation="Landscape" columnWidth="1186" leftMargin="18" rightMargin="18" topMargin="18" bottomMargin="18" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="lvqa1"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date"/>
+	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
+	<parameter name="STUDY_ID" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select s.studydesc, 
+       p.sstudyid,
+       p.s_participantid,
+       p.externalparticipantid,
+       c.consentdesc,
+       cp.consentflag,
+       cp.consenteddt,
+       cp.consenter,
+       a.firstname,
+       a.lastname,
+       cp.refusalreason,
+       cp.consentedfor,
+       d.departmentdesc,
+       sysuser.sysuserdesc
+  from s_participant p
+    left outer join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+    left outer join u_consent c on c.u_consentid = cp.consentid
+    join s_study s on s.s_studyid = p.sstudyid
+    join department d on s.securitydepartment = d.departmentid
+    join departmentsysuser dsu on dsu.departmentid = d.departmentid
+    join sysuser on sysuser.sysuserid = dsu.sysuserid
+    left outer join address a on a.addressid = cp.consenter
+ where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and p.enrolldt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and instr($P{STUDY_ID} || ';', p.sstudyid || ';') > 0
+ order by s.studydesc,
+          p.externalparticipantid]]>
+	</queryString>
+	<field name="STUDYDESC" class="java.lang.String"/>
+	<field name="SSTUDYID" class="java.lang.String"/>
+	<field name="S_PARTICIPANTID" class="java.lang.String"/>
+	<field name="EXTERNALPARTICIPANTID" class="java.lang.String"/>
+	<field name="CONSENTDESC" class="java.lang.String"/>
+	<field name="CONSENTFLAG" class="java.lang.String"/>
+	<field name="CONSENTEDDT" class="java.sql.Timestamp"/>
+	<field name="CONSENTER" class="java.lang.String"/>
+	<field name="FIRSTNAME" class="java.lang.String"/>
+	<field name="LASTNAME" class="java.lang.String"/>
+	<field name="REFUSALREASON" class="java.lang.String"/>
+	<field name="CONSENTEDFOR" class="java.lang.String"/>
+	<field name="DEPARTMENTDESC" class="java.lang.String"/>
+	<field name="SYSUSERDESC" class="java.lang.String"/>
+	<variable name="EXTERNALPARTICIPANTID1" class="java.lang.Integer" resetType="Group" resetGroup="STUDYDESC" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{EXTERNALPARTICIPANTID}]]></variableExpression>
+	</variable>
+	<variable name="CONSENTFLAG_YES" class="java.lang.Integer" resetType="Group" resetGroup="STUDYDESC" calculation="Sum">
+		<variableExpression><![CDATA[($F{CONSENTFLAG}.equalsIgnoreCase( "yes" )) ? 1 : 0]]></variableExpression>
+	</variable>
+	<variable name="CONSENTFLAG_NO" class="java.lang.Integer" resetType="Group" resetGroup="STUDYDESC" calculation="Sum">
+		<variableExpression><![CDATA[($F{CONSENTFLAG}.equalsIgnoreCase( "no" )) ? 1 : 0]]></variableExpression>
+	</variable>
+	<group name="STUDYDESC">
+		<groupExpression><![CDATA[$F{STUDYDESC}]]></groupExpression>
+		<groupHeader>
+			<band height="90" splitType="Stretch">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<staticText>
+					<reportElement x="0" y="73" width="120" height="14" uuid="221b3f8c-ba50-4320-a870-aa2f1bd757ed">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<text><![CDATA[External Participant ID]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="10" width="370" height="14" uuid="7767f993-d6a5-44eb-b03d-22895e0ff969">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA["Study Name: " + $F{STUDYDESC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="120" y="73" width="200" height="14" uuid="12a6336d-3f3a-4751-b720-1b857ea984f9">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<text><![CDATA[Consent Form Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="320" y="73" width="70" height="14" uuid="7c07d9b3-81aa-4b63-842a-767e25e74e78"/>
+					<text><![CDATA[Consented?]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="590" y="73" width="200" height="14" uuid="bc47a8ab-f21e-4bc5-abc3-4e06f185f6a0">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<text><![CDATA[Consented Date/Time]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="790" y="73" width="200" height="14" uuid="db7a7fa2-3cf3-48e2-bc08-cf085c0ccd56">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<text><![CDATA[Consented By]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="990" y="73" width="200" height="14" uuid="cddd571e-2a12-4bf5-83a0-f7f1c83eacaa">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<text><![CDATA[Refusal Reason]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="88" width="1186" height="1" uuid="9660c0b3-db7d-4413-ac30-00322eef3361">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+				</line>
+				<textField evaluationTime="Group" evaluationGroup="STUDYDESC">
+					<reportElement x="0" y="24" width="370" height="14" uuid="42b38b3b-eaba-47ef-aae5-faa7e169293e">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA["Total # Participants Enrolled: " + $V{EXTERNALPARTICIPANTID1}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="STUDYDESC">
+					<reportElement x="0" y="38" width="370" height="14" uuid="a441f98e-0a51-4126-bb10-f37214044fe4">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA["Total Consented: " + $V{CONSENTFLAG_YES}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="STUDYDESC">
+					<reportElement x="0" y="52" width="370" height="14" uuid="880a4ba2-000c-4c5a-8bd1-ee1ffcc6916c">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA["Total Refused: " + $V{CONSENTFLAG_NO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="390" y="73" width="200" height="14" uuid="c0e097b2-ba81-4e7c-b6fc-a8a41fdf9a44">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<text><![CDATA[Intended Working Group]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="120" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText" x="0" y="41" width="370" height="14" uuid="ea333cfd-5f54-4c35-8ecb-4739cba897c0">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Consent Report]]></text>
+			</staticText>
+			<image scaleImage="RealSize" isUsingCache="false">
+				<reportElement key="image-1" x="0" y="5" width="139" height="36" uuid="9aca5bd1-2744-4b89-a4c7-bf62a2eaf2d4"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{SAPPHIRE_ReportPath}+"/images/CoreResearchLogo_wt.png"]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textReport" x="0" y="97" width="370" height="14" uuid="bb266ea7-e72d-42a4-ae73-f3b808fa439b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Enrollment Date Range: " + new SimpleDateFormat("MM/dd/yyyy").format($P{SAPPHIRE_START_DATE}) + " to " + new SimpleDateFormat("MM/dd/yyyy").format($P{SAPPHIRE_END_DATE})]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textCurrentDate" x="0" y="55" width="370" height="14" uuid="5b9889e1-7871-4f3f-a83d-4098057834f5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generation Date: " + $P{REPORT_SCRIPTLET}.formatDate(new Date(),2,2)]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textCurrentUser" x="0" y="69" width="370" height="14" uuid="ce03abd9-dac2-4074-b915-ae4e14f39876"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generated By: " + $F{SYSUSERDESC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textCurrentUser" x="0" y="83" width="370" height="14" uuid="91298631-27ca-4be5-9991-8f6c9fd5278d"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Core Name: " + $F{DEPARTMENTDESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField>
+				<reportElement x="0" y="0" width="120" height="14" uuid="98a8a249-ad52-443d-af91-95a9b9e64b68">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{EXTERNALPARTICIPANTID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="120" y="0" width="200" height="14" uuid="2b8c53f1-95b3-4b46-9aaa-3783fa064d50">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{CONSENTDESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="320" y="0" width="70" height="14" uuid="b1fca743-5806-4bfe-a520-eb7ce43b76e0"/>
+				<textFieldExpression><![CDATA[$F{CONSENTFLAG}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="590" y="0" width="200" height="14" uuid="f23f0771-8ea6-440f-94ad-f8f378436fa7">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{CONSENTEDDT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="790" y="0" width="200" height="14" uuid="c4ffe3c1-88a0-40d0-870c-e2994036689d">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[($F{FIRSTNAME} == null || $F{FIRSTNAME}.isEmpty() ? "" : $F{FIRSTNAME}) + " " + ($F{LASTNAME} == null || $F{LASTNAME}.isEmpty() ? "" : $F{LASTNAME})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="990" y="0" width="200" height="14" uuid="7297ca23-15f1-40bb-b4f6-9748df85e804"/>
+				<textFieldExpression><![CDATA[$F{REFUSALREASON}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="390" y="0" width="200" height="14" uuid="e1367454-7cb0-4311-9e1b-315eb0170a17">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{CONSENTEDFOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

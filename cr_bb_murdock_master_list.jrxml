@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-06-24T14:48:03 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_murdock_master_list" pageWidth="2088" pageHeight="44" orientation="Landscape" columnWidth="2088" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="lvqa1"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="inch"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="STUDY_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EVENT_NAME" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COLLECTION_START_DATE" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COLLECTION_END_DATE" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select u_place,
+       studydesc,
+       eventlabel,
+       u_externalindividualid,
+       externalparticipantid,
+       min(collectiondt) as min_collectiondt,
+       sum(case when lower(sampletypeid) = 'urine' then 1 else 0 end) as urine,
+       sum(case when lower(sampletypeid) = 'plasma' then 1 else 0 end) as plasma,
+       sum(case when lower(sampletypeid) = 'serum' and lower(containertypeid) = 'cryovial, 0.5ml' then 1 else 0 end) as serum_05,
+       sum(case when lower(sampletypeid) = 'serum' and lower(containertypeid) = 'cryovial, 5.0 ml' then 1 else 0 end) as serum_50,
+       sum(case when lower(sampletypeid) = 'whole blood' and lower(additive_type) = 'paxgene rna' then 1 else 0 end) as paxgene,
+       sum(case when lower(sampletypeid) = 'whole blood' and lower(additive_type) = 'edta' and lower(containertypeid) = 'vacutainer, 2 ml' then 1 else 0 end) as edta_2,
+       sum(case when lower(sampletypeid) = 'whole blood' and lower(additive_type) = 'edta' and lower(containertypeid) = 'vacutainer, 3 ml' then 1 else 0 end) as edta_3,
+       sum(case when lower(sampletypeid) = 'whole blood' and lower(additive_type) = 'edta' and lower(containertypeid) = 'vacutainer, 4 ml' then 1 else 0 end) as edta_4,
+       sum(case when lower(sampletypeid) = 'whole blood' and lower(additive_type) = 'edta' and lower(containertypeid) = 'vacutainer, 6 ml' then 1 else 0 end) as edta_6,
+       sum(case when lower(sampletypeid) = 'buffy coat' then 1 else 0 end) as buffycoat,
+       sum(case when lower(sampletypeid) = 'blood card' then 1 else 0 end) as bloodcard
+  from (
+select sf.s_samplefamilyid,
+       sf.sstudyid,
+       sf.u_place,
+       pe.eventlabel,
+       sf.collectiondt,
+       p.u_externalindividualid,
+       p.externalparticipantid,
+       s.sampletypeid,
+       s.storagestatus,
+       (select listagg(t.detailkeyid1,',') within group (order by t.detailkeyid1)
+         from s_sampledetail t
+        where t.s_sampleid = s.s_sampleid) additive_type,
+       ti.containertypeid,
+       st.studydesc
+  from s_samplefamily sf
+    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
+    join s_participant p on p.s_participantid = sf.participantid
+    join s_study st on st.s_studyid = sf.sstudyid
+    join s_participantevent pe on pe.participantid = sf.participantid
+      and pe.s_participanteventid = sf.participanteventid
+    join department d on d.departmentid = st.securitydepartment
+    join departmentsysuser dsu on dsu.departmentid = d.departmentid
+    left outer join trackitem ti on s.s_sampleid = ti.linkkeyid1 and ti.linksdcid = 'Sample'
+ where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and s.storagestatus in ('Received', 'In Circulation')
+   and sf.collectiondt >= $P{COLLECTION_START_DATE} 
+   and sf.collectiondt <= $P{COLLECTION_END_DATE} 
+   and ($P{STUDY_ID} is null or instr($P{STUDY_ID} || ';', sf.sstudyid || ';') > 0)
+   and ($P{EVENT_NAME} is null or instr($P{EVENT_NAME} || ';', pe.eventlabel || ';') > 0)
+)
+ group by
+       u_place,
+       studydesc,
+       eventlabel,
+       u_externalindividualid,
+       externalparticipantid
+ order by 
+       u_place,
+       studydesc,
+       eventlabel,
+       u_externalindividualid,
+       externalparticipantid
+]]>
+	</queryString>
+	<field name="U_PLACE" class="java.lang.String"/>
+	<field name="STUDYDESC" class="java.lang.String"/>
+	<field name="EVENTLABEL" class="java.lang.String"/>
+	<field name="U_EXTERNALINDIVIDUALID" class="java.lang.String"/>
+	<field name="EXTERNALPARTICIPANTID" class="java.lang.String"/>
+	<field name="MIN_COLLECTIONDT" class="java.sql.Timestamp"/>
+	<field name="URINE" class="java.math.BigDecimal"/>
+	<field name="PLASMA" class="java.math.BigDecimal"/>
+	<field name="SERUM_05" class="java.math.BigDecimal"/>
+	<field name="SERUM_50" class="java.math.BigDecimal"/>
+	<field name="PAXGENE" class="java.math.BigDecimal"/>
+	<field name="EDTA_2" class="java.math.BigDecimal"/>
+	<field name="EDTA_3" class="java.math.BigDecimal"/>
+	<field name="EDTA_4" class="java.math.BigDecimal"/>
+	<field name="EDTA_6" class="java.math.BigDecimal"/>
+	<field name="BUFFYCOAT" class="java.math.BigDecimal"/>
+	<field name="BLOODCARD" class="java.math.BigDecimal"/>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<printWhenExpression><![CDATA[new Boolean($V{PAGE_NUMBER}.intValue() == 1)]]></printWhenExpression>
+			<staticText>
+				<reportElement x="200" y="0" width="360" height="14" uuid="55f36a6c-2474-428b-ab1b-0cca2d997ddd"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Study]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="200" height="14" uuid="a64dbc46-670e-4db2-837e-9ef9f8a6882c">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Site]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="560" y="0" width="80" height="14" uuid="3a973f7d-a617-41c2-8c2d-9dac9f9b3246"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Visit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="640" y="0" width="100" height="14" uuid="a41ceced-0ae3-44b3-8f85-0ff97d22e2c6"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date/Time]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="0" width="100" height="14" uuid="f9b9e547-bfb4-4f9b-9eb5-944a2262ddfd"/>
+				<textElement textAlignment="Left">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Participant]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="840" y="0" width="100" height="14" uuid="6978f080-87f0-40ec-b451-f55aca5401a4"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Kit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="940" y="0" width="100" height="14" uuid="aac3ba9d-ffc9-479f-8b7d-117807a913fb"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count Urine]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1040" y="0" width="100" height="14" uuid="c7f4c9bd-93cd-4ef0-a7c2-ae83ed433257"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count Plasma]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1140" y="0" width="100" height="14" uuid="fe245fc3-761b-4da8-844d-4465cd3fc2a5"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count 5.0mL Serum]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1240" y="0" width="100" height="14" uuid="39ace950-b54f-447a-ad53-7e58e13253a1"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count 0.5mL Serum]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1340" y="0" width="100" height="14" uuid="1bc097ac-9666-4f37-aba6-dee022130de3"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count PAXgene]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1440" y="0" width="100" height="14" uuid="a850dc10-1761-4a1b-be16-cb45c24e3a86"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count 2mL EDTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1540" y="0" width="100" height="14" uuid="4671ec94-5dbf-41b1-ab5e-741d171def52"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count 3mL EDTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1640" y="0" width="100" height="14" uuid="0e8dce49-7bc2-439b-8c3b-ee801ee09c8d"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count 4mL EDTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1740" y="0" width="100" height="14" uuid="62bbdfeb-b732-4115-8702-aee85b84c075"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count 6mL EDTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1840" y="0" width="100" height="14" uuid="0472d189-fc97-4f2e-b8aa-870a566973a6"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count Blood Card]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1940" y="0" width="100" height="14" uuid="ed3d92b6-d1b1-409d-9d08-4dcbc2126e99"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count Buffy Coat]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="200" height="14" uuid="d22de24e-c6b0-4036-8c5f-b464deebfaf8">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{U_PLACE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="740" y="0" width="100" height="14" uuid="f2637022-d864-4578-8c94-a3ce104d79a6"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{U_EXTERNALINDIVIDUALID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="840" y="0" width="100" height="14" uuid="435dc9f1-2371-4e90-b34a-b8bed7b2ab90"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{EXTERNALPARTICIPANTID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="560" y="0" width="80" height="14" uuid="bb8da084-506a-40a9-b7ff-7cddc1d10e6b"/>
+				<textFieldExpression><![CDATA[$F{EVENTLABEL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="360" height="14" uuid="d3bdf8b0-7957-4085-b752-02b10c5c932d">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{STUDYDESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="640" y="0" width="100" height="14" uuid="c54e9c1f-b13f-40eb-8553-25ea02355d3c"/>
+				<textFieldExpression><![CDATA[$F{MIN_COLLECTIONDT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="940" y="0" width="100" height="14" uuid="8352d390-fb9d-4d1c-a670-e26e30cbf3c8"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{URINE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1040" y="0" width="100" height="14" uuid="9b983582-9df5-4fce-a9f3-256d527d63b9"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{PLASMA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1140" y="0" width="100" height="14" uuid="c622b53d-0b79-459f-953e-34f31b675988"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{SERUM_50}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1240" y="0" width="100" height="14" uuid="94a2a083-2b38-4944-ad0e-fc17d9d5e0ee"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{SERUM_05}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1340" y="0" width="100" height="14" uuid="f483cce1-2e91-41aa-b7a2-7d796db12acc"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{PAXGENE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1440" y="0" width="100" height="14" uuid="115c32ef-bae3-4312-bea5-349cce3d0b8d"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{EDTA_2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1540" y="0" width="100" height="14" uuid="5aa44df4-d271-48a9-a17f-d2e243becca6"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{EDTA_3}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1640" y="0" width="100" height="14" uuid="f95632eb-759a-4b59-b840-60e47a59a7fd"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{EDTA_4}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1740" y="0" width="100" height="14" uuid="1b6dc956-6cb6-42c2-b6ba-9b8be6609040"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{EDTA_6}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1840" y="0" width="100" height="14" uuid="83d5df61-0bee-4c50-ad07-bc7dc7b0538c"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{BLOODCARD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1940" y="0" width="100" height="14" uuid="2666ec9f-7e81-48aa-9039-da6c076ee6a9">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{BUFFYCOAT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

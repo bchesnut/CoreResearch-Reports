@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
+<!-- 2016-06-08T12:00:16 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_sr_smif_certified_users" pageWidth="2120" pageHeight="612" orientation="Landscape" columnWidth="2120" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LVQA1"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="InstrumentID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[select sys.logonname as NetID,
+       sys.sysuserdesc as Name,
+       sys.sysuserid as DukeUniqueID,
+       sys.email as Email,
+       uc.certificationstatus as CertificationStatus,
+       uc.certifieddt as CertificationDate,
+       uc.expirationdt as ExpirationDate,
+       uc.CERTIFIEDFORKEYID1 as InstrumentID,
+       c.sysuserdesc as CertifiedbyName,
+       uc.notes as Description
+
+from u_sharedresourcecert uc
+join sysuser sys on sys.sysuserid = uc.RESOURCEKEYID1
+join sysuser c on c.sysuserid = uc.certifiedby
+where instr($P{InstrumentID}, uc.certifiedforkeyid1 || '|') >0]]>
+	</queryString>
+	<field name="NETID" class="java.lang.String"/>
+	<field name="NAME" class="java.lang.String"/>
+	<field name="DUKEUNIQUEID" class="java.lang.String"/>
+	<field name="EMAIL" class="java.lang.String"/>
+	<field name="CERTIFICATIONSTATUS" class="java.lang.String"/>
+	<field name="CERTIFICATIONDATE" class="java.sql.Timestamp"/>
+	<field name="EXPIRATIONDATE" class="java.sql.Timestamp"/>
+	<field name="INSTRUMENTID" class="java.lang.String"/>
+	<field name="CERTIFIEDBYNAME" class="java.lang.String"/>
+	<field name="DESCRIPTION" class="java.lang.String"/>
+	<columnHeader>
+		<band height="31" splitType="Stretch">
+			<printWhenExpression><![CDATA[new Boolean($V{PAGE_NUMBER}.intValue() == 1)]]></printWhenExpression>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="30" uuid="4a65869b-8038-4fea-bb30-1491ab6c5f33"/>
+				<text><![CDATA[NETID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="130" height="30" uuid="96ecf0fc-1b65-445b-9e22-d14f7af2cb07"/>
+				<text><![CDATA[NAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="0" width="100" height="30" uuid="673f9d7a-8ce1-4623-b796-d8207cafcb0e"/>
+				<text><![CDATA[DUKEUNIQUEID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="327" y="0" width="143" height="30" uuid="4f54c91c-6824-4db6-ac1a-cea0afd9dff5"/>
+				<text><![CDATA[EMAIL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="470" y="0" width="130" height="30" uuid="5db77f87-358c-4683-b8cf-3f246a595086"/>
+				<text><![CDATA[CERTIFICATIONSTATUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="600" y="0" width="140" height="30" uuid="299dd979-dd42-4cb6-b65a-4b0de9018168"/>
+				<text><![CDATA[CERTIFICATIONDATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="0" width="128" height="30" uuid="e492bdf0-f298-423d-a0ac-ff67d6e1fdb6"/>
+				<text><![CDATA[EXPIRATIONDATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="868" y="0" width="162" height="30" uuid="ea17bfc5-68a6-46e3-bf36-90e7cd1af051"/>
+				<text><![CDATA[INSTRUMENTID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1030" y="0" width="144" height="30" uuid="6287b8cc-b80e-4719-bb98-ae20b6be2369"/>
+				<text><![CDATA[CERTIFIEDBYNAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1180" y="0" width="212" height="30" uuid="cac9122a-674c-4204-a50b-8d258291a1dc"/>
+				<text><![CDATA[DESCRIPTION]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="30" width="1390" height="1" uuid="6ae1be8b-345e-4bf1-8d8f-fecc356266b9">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="4" width="100" height="30" uuid="cafce350-d05b-43ac-8281-0505a04821b0"/>
+				<textFieldExpression><![CDATA[$F{NETID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="5" width="130" height="30" uuid="5a6df599-5ab9-425c-bdf3-26e9bd49ec80"/>
+				<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="230" y="4" width="100" height="30" uuid="5fb75251-2dad-48cd-b8e6-24899edcb6a3"/>
+				<textFieldExpression><![CDATA[$F{DUKEUNIQUEID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="327" y="4" width="143" height="30" uuid="4f223359-21b6-4619-b5db-77bff1ed895a"/>
+				<textFieldExpression><![CDATA[$F{EMAIL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="470" y="4" width="130" height="30" uuid="6582c476-90e0-44a7-ad81-f6c2b7893bca"/>
+				<textFieldExpression><![CDATA[$F{CERTIFICATIONSTATUS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="600" y="4" width="140" height="30" uuid="b14df258-9673-4e00-8842-837b1735f9a5"/>
+				<textFieldExpression><![CDATA[$F{CERTIFICATIONDATE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="740" y="4" width="128" height="30" uuid="c7011876-43d6-4acd-9924-2659e5c989ad"/>
+				<textFieldExpression><![CDATA[$F{EXPIRATIONDATE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="868" y="4" width="162" height="30" uuid="0a7687e2-f8ce-46fe-86df-746401c105a2"/>
+				<textFieldExpression><![CDATA[$F{INSTRUMENTID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1030" y="4" width="144" height="30" uuid="521f2290-80b3-48d3-a3d4-9568dc24a59b"/>
+				<textFieldExpression><![CDATA[$F{CERTIFIEDBYNAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1180" y="0" width="212" height="30" uuid="57d20225-0d3f-4010-9348-e32f79438dbe"/>
+				<textFieldExpression><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

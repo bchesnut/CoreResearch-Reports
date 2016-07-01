@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_sr_project_users" pageWidth="595" pageHeight="842" columnWidth="565" leftMargin="0" rightMargin="30" topMargin="0" bottomMargin="20" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="b106efec-6a29-4193-a3b0-6c7b81a4bf3d">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QUERY_PI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select p.s_projectid,
+       u.sysuserid,
+       u.logonname,
+       u.sysuserdesc,
+       pm.u_enddt,
+       f.fundnumber
+  from s_project p
+    join s_projectmember pm on pm.s_projectid = p.s_projectid
+    join sysuser u          on u.sysuserid = pm.sysuserid
+    join u_fundsource f     on f.u_fundsourceid = p.u_fundsourceid
+ where p.u_pi = $P{QUERY_PI}
+ order by p.s_projectid,
+          u.u_lname]]>
+	</queryString>
+	<field name="S_PROJECTID" class="java.lang.String"/>
+	<field name="SYSUSERID" class="java.lang.String"/>
+	<field name="LOGONNAME" class="java.lang.String"/>
+	<field name="SYSUSERDESC" class="java.lang.String"/>
+	<field name="U_ENDDT" class="java.sql.Timestamp"/>
+	<field name="FUNDNUMBER" class="java.lang.String"/>
+	<group name="Project">
+		<groupExpression><![CDATA[$F{S_PROJECTID}]]></groupExpression>
+		<groupHeader>
+			<band height="38">
+				<staticText>
+					<reportElement x="0" y="22" width="78" height="13" uuid="ad9e585a-0c4c-439d-9c5c-caabf5d91a1a"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Duke Unique ID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="79" y="22" width="78" height="13" uuid="dc16123a-db65-454d-8186-bef02339d8fd"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Net ID]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="157" y="22" width="188" height="13" uuid="b7795820-fc61-43e0-b54e-f098243942ee"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Name]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="36" width="400" height="1" uuid="77b66860-ceff-4bab-b40a-2d55e3229f11"/>
+				</line>
+				<staticText>
+					<reportElement x="345" y="22" width="57" height="13" uuid="7ac37f2f-8910-4895-be80-2bd08cb6b94d"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[End date]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="5" width="400" height="13" uuid="60ab2562-a7a2-4c7b-a885-a612c2bf72c4"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Project: " + $F{S_PROJECTID} + ", Fund: " + $F{FUNDNUMBER}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="16"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="4" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="188" height="13" uuid="e61c73ef-8ec4-4780-bb85-7f99bec451dd"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Projects Members]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="2" width="78" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="a5c9f123-af11-4d09-b21d-885ac76b3514"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SYSUSERID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" x="79" y="2" width="78" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="8e456895-4168-4633-be4c-f8d216045fc0"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LOGONNAME}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" x="157" y="2" width="188" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="cd4429fb-ec0e-417f-904d-faff0a37815b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SYSUSERDESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="345" y="2" width="57" height="13" uuid="ea9f9615-90f2-42a6-bc4b-24ec43a1e1b9"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("MM/dd/yyyy").format($F{U_ENDDT})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_sr_lmcf_invoice_subsidy" pageWidth="612" pageHeight="792" orientation="Landscape" columnWidth="576" leftMargin="18" rightMargin="18" topMargin="18" bottomMargin="18" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LMCF_SUBSIDY_THRESHOLD" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LMCF_SUBSIDY_PCENT" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select u_inv_billingid,
+       invcreatedt,
+       status,
+       core,
+       pi,
+       invoiceamount,
+       core_name,
+       core_group,
+       pi_name,
+       sum_invoice_amt,
+       case
+         when sum_invoice_amt > $P{LMCF_SUBSIDY_THRESHOLD} then
+           invoiceamount * (((sum_invoice_amt - $P{LMCF_SUBSIDY_THRESHOLD})*$P{LMCF_SUBSIDY_PCENT})/sum_invoice_amt)
+         else 0
+       end as subsidy_calc
+  from (
+select inv.u_inv_billingid,
+       inv.invcreatedt,
+       inv.status,
+       inv.core,
+       inv.pi,
+       nvl(inv.invoiceamount,0)   as invoiceamount,
+       nvl(inv.adjustmentvalue,0) as adjustmentvalue,
+       nvl(inv.subsidy,0) 	   as subsidy,
+       nvl(inv.finalamount,0)     as finalamount,
+       d.departmentdesc as core_name,
+       d.u_coregroup    as core_group,
+       pi.sysuserdesc   as pi_name,
+       sum(nvl(inv.invoiceamount,0)) over (partition by inv.core, inv.pi) sum_invoice_amt
+  from U_INV_BILLING inv
+    inner join DEPARTMENT d             on inv.core            = d.departmentid
+    left outer join SYSUSER pi          on inv.pi              = pi.sysuserid
+ where inv.status in ('Pending Approval','Ready to Bill')
+   and inv.core   = 'D-0001'
+   and exists (
+     select *
+       from JOBTYPEDEPARTMENT jd
+         inner join SYSUSERJOBTYPE uj        on jd.jobtypeid        = uj.jobtypeid
+         inner join SYSUSER u                on uj.sysuserid        = u.sysuserid
+      where jd.departmentid = inv.core
+        and u.sysuserid     = $P{SAPPHIRE_CurrentUser}
+     )
+)
+ order by core,
+	u_inv_billingid]]>
+	</queryString>
+	<field name="U_INV_BILLINGID" class="java.lang.String"/>
+	<field name="INVCREATEDT" class="java.sql.Timestamp"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="CORE" class="java.lang.String"/>
+	<field name="PI" class="java.lang.String"/>
+	<field name="INVOICEAMOUNT" class="java.math.BigDecimal"/>
+	<field name="CORE_NAME" class="java.lang.String"/>
+	<field name="CORE_GROUP" class="java.lang.String"/>
+	<field name="PI_NAME" class="java.lang.String"/>
+	<field name="SUM_INVOICE_AMT" class="java.math.BigDecimal"/>
+	<field name="SUBSIDY_CALC" class="java.math.BigDecimal"/>
+	<variable name="INVOICEAMOUNT_1" class="java.math.BigDecimal" resetType="Group" resetGroup="CORE" calculation="Sum">
+		<variableExpression><![CDATA[$F{INVOICEAMOUNT}]]></variableExpression>
+	</variable>
+	<variable name="SUBSIDY_CALC_1" class="java.math.BigDecimal" resetType="Group" resetGroup="CORE" calculation="Sum">
+		<variableExpression><![CDATA[$F{SUBSIDY_CALC}]]></variableExpression>
+	</variable>
+	<group name="CORE" isReprintHeaderOnEachPage="true" minHeightToStartNewPage="52">
+		<groupExpression><![CDATA[$F{CORE}]]></groupExpression>
+		<groupHeader>
+			<band height="38" splitType="Stretch">
+				<staticText>
+					<reportElement x="0" y="20" width="100" height="14" uuid="35d0074a-4774-4655-93a8-bc140fb88cf0"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Invoice]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="259" y="20" width="70" height="14" uuid="eee03274-61d0-4dd4-926c-5e3fb9e61488"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Invoice]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="329" y="20" width="70" height="14" uuid="cf44a6df-fbf9-4466-aa7c-145592ac154f"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Subsidy]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="34" width="756" height="1" uuid="a0ba016c-3aee-4d74-b6fe-9150620effb9"/>
+				</line>
+				<textField>
+					<reportElement x="0" y="0" width="472" height="16" uuid="ad4712f9-e7c5-4698-a4e0-820dcd22afff"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CORE} + ":  " + $F{CORE_NAME}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="100" y="20" width="63" height="14" uuid="4fe66e60-3871-477f-8718-5b96a12780e2"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[Invoice date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="163" y="20" width="88" height="14" uuid="86920055-2a05-4e33-802f-605e8d5f7a8b"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[PI Name]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="37" splitType="Stretch">
+				<textField evaluationTime="Group" evaluationGroup="CORE">
+					<reportElement x="259" y="8" width="70" height="13" uuid="25d1a04a-398e-4e0d-b23f-331f560980d3"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[NumberFormat.getCurrencyInstance().format($V{INVOICEAMOUNT_1})]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="CORE" isBlankWhenNull="true">
+					<reportElement x="329" y="8" width="70" height="13" uuid="f5a788f1-9034-4f96-ab88-57e13953a1fa"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[NumberFormat.getCurrencyInstance().format($V{SUBSIDY_CALC_1})]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="4" width="756" height="1" uuid="85ca0cba-493f-41e2-9e50-e438a5afc108"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="57" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText" x="0" y="21" width="576" height="26" uuid="ea333cfd-5f54-4c35-8ecb-4739cba897c0"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LMCF Invoice Subsidy]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line" positionType="FixRelativeToBottom" x="0" y="46" width="756" height="1" forecolor="#000000" uuid="ac089da8-463d-4e49-9231-b6ba882252c0"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line" x="0" y="1" width="756" height="1" forecolor="#000000" uuid="0ccb2e14-c858-4b64-b5da-720c3fb09f8b"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<image scaleImage="RealSize" isUsingCache="false">
+				<reportElement key="image-1" x="0" y="5" width="139" height="36" uuid="9aca5bd1-2744-4b89-a4c7-bf62a2eaf2d4"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{SAPPHIRE_ReportPath}+"/images/CoreResearchLogo_wt.png"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="13" uuid="6747d216-2372-4d79-bba1-cef56ad0882f"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{U_INV_BILLINGID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="259" y="0" width="70" height="13" uuid="15663c50-7c0a-4fcf-8ba3-eea58b33879a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getCurrencyInstance().format($F{INVOICEAMOUNT})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="329" y="0" width="70" height="13" uuid="9d108590-9131-4311-adfe-ac07b5c40ec1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getCurrencyInstance().format($F{SUBSIDY_CALC})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="63" height="13" uuid="abf9a34e-336e-4a50-98d3-807a0f4a237c"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("MM/dd/yyyy").format($F{INVCREATEDT})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="163" y="0" width="88" height="13" uuid="b966b76f-a3ac-4ca8-b03f-e3f86e0fe6c0"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PI_NAME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textPageNumber" x="429" y="2" width="109" height="14" uuid="13183c93-1c6b-47e9-bd15-182efb7b12fe"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement key="textTotalPages" x="537" y="2" width="36" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="97a2993f-1189-46f0-8311-732064aba4bb"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line" x="0" y="1" width="756" height="1" forecolor="#000000" uuid="2c06b7c8-e365-439c-843e-5efa14f8117d"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textCurrentDate" x="205" y="16" width="208" height="14" uuid="5b9889e1-7871-4f3f-a83d-4098057834f5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["On " + $P{REPORT_SCRIPTLET}.formatDate(new Date(),2,2)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textCurrentUser" x="205" y="2" width="127" height="14" uuid="ce03abd9-dac2-4074-b915-ae4e14f39876"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generated By " + $P{SAPPHIRE_CurrentUser}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textReport" x="1" y="2" width="127" height="14" uuid="37f6d17a-b689-4896-b064-d1168eb50ec7"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Report " + $P{SAPPHIRE_ReportID} + " v" + $P{SAPPHIRE_ReportVersion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="481" y="15" width="91" height="14" uuid="70a26782-fcff-4f1e-a719-de8c89219ea5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SAPPHIRE_ReportEventID}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

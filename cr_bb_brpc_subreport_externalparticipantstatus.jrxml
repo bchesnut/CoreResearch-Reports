@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
+<!-- 2016-05-18T09:21:21 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subreport_externalparticipantstatus" pageWidth="756" pageHeight="576" orientation="Landscape" columnWidth="756" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LVQA1"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date"/>
+	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
+	<parameter name="STUDY_ID" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select s_study.studydesc,
+       s_participant.participantstatus,
+       s_participant.sstudyid,
+       s_participant.s_participantid,
+       s_participant.externalparticipantid
+   from s_participant 
+       join s_study on s_study.s_studyid = s_participant.sstudyid
+       join U_CONSENTPARTICIPNTMAP cp on cp.participantid= s_participant.S_PARTICIPANTID
+       where s_study.s_studyid=  $P{STUDY_ID} 
+       and cp.consenteddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+       order by participantstatus]]>
+	</queryString>
+	<field name="STUDYDESC" class="java.lang.String"/>
+	<field name="PARTICIPANTSTATUS" class="java.lang.String"/>
+	<field name="SSTUDYID" class="java.lang.String"/>
+	<field name="S_PARTICIPANTID" class="java.lang.String"/>
+	<field name="EXTERNALPARTICIPANTID" class="java.lang.String"/>
+	<variable name="EXTERNALPARTICIPANTID2" class="java.lang.Integer" resetType="Group" resetGroup="STUDYDESC" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{EXTERNALPARTICIPANTID}]]></variableExpression>
+	</variable>
+	<variable name="PARTICIPANTSTATUS1" class="java.lang.Integer" resetType="Group" resetGroup="STUDYDESC" calculation="Sum">
+		<variableExpression><![CDATA[$F{PARTICIPANTSTATUS}.equalsIgnoreCase("Enrolled")?1:0]]></variableExpression>
+	</variable>
+	<variable name="PARTICIPANTSTATUS2" class="java.lang.Integer" resetType="Group" resetGroup="STUDYDESC" calculation="Sum">
+		<variableExpression><![CDATA[$F{PARTICIPANTSTATUS}.equalsIgnoreCase("Withdrawn")? 1:0]]></variableExpression>
+	</variable>
+	<variable name="PARTICIPANTSTATUS3" class="java.lang.Integer" resetType="Group" resetGroup="STUDYDESC" calculation="Sum">
+		<variableExpression><![CDATA[$F{PARTICIPANTSTATUS}.equalsIgnoreCase("Complete")?1:0]]></variableExpression>
+	</variable>
+	<variable name="PARTICIPANTSTATUS4" class="java.lang.Integer" resetType="Group" resetGroup="STUDYDESC" calculation="Count">
+		<variableExpression><![CDATA[$F{PARTICIPANTSTATUS}]]></variableExpression>
+	</variable>
+	<group name="STUDYDESC">
+		<groupExpression><![CDATA[$F{STUDYDESC}]]></groupExpression>
+		<groupHeader>
+			<band height="66" splitType="Stretch">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<textField evaluationTime="Group" evaluationGroup="STUDYDESC">
+					<reportElement x="0" y="6" width="295" height="14" uuid="52f310eb-bc46-44cc-ac1f-0ca84cee95a6">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA["Total # of Participants Enrolled: " + $V{PARTICIPANTSTATUS1}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="STUDYDESC">
+					<reportElement x="0" y="20" width="295" height="14" uuid="247efd1b-e8da-4024-b438-56ebb1e6f039">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA["Total # of Participants Withdrawn: " + $V{PARTICIPANTSTATUS2}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="STUDYDESC">
+					<reportElement x="0" y="34" width="295" height="14" uuid="3bfec655-1851-4031-b43c-0d5e8546d002">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA["Total # of Participants Completed: " + $V{PARTICIPANTSTATUS3}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="STUDYDESC">
+					<reportElement x="0" y="49" width="295" height="14" uuid="f16ab6db-8558-4cff-b0b1-e479d57eedf9">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA["Total # Participants:" + $V{PARTICIPANTSTATUS4}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<detail>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</band>
+	</detail>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

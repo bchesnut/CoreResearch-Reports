@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-01-22T20:13:19 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_sr_instrument_reservation_details" pageWidth="2170" pageHeight="612" orientation="Landscape" columnWidth="2170" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="lvdev1"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date"/>
+	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
+	<parameter name="QUERY_PI" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select rsv.u_reservationid,
+       rsv.createdt,
+       rsv.createby,
+       rsv.departmentid,
+       rsv.startdate,
+       rsv.starttime,
+       rsv.enddate,
+       rsv.endtime,
+       rsv.usagetime,
+       rsv.assistancerequiredflag,
+       rsv.repeattype,
+       rsv.repeatenddate,
+       rsv.repeatevery,
+       rsv.reservedfor,
+       rsv.status,
+       rsv.usagestatus,
+       rsv.basedonreservationid,
+       rsv.actualstartdate,
+       rsv.actualstarttime,
+       rsv.actualenddate,
+       rsv.actualendtime,
+       rsv.actualusagetime,
+       rsv.projectid,
+       rsv.pi,
+       rsv.membership,
+       rsv.affiliation,
+       rsv.fundsourceid,
+       rsv.resourcegroupid,
+       rsv.rsrcgroupitemid,
+       rsv.approvedstartdate,
+       rsv.approvedstarttime,
+       rsv.approvedenddate,
+       rsv.approvedendtime,
+       rsv.email,
+       i.instrumentid,
+       i.instrumentdesc,
+       i.instrumentmodelid,
+       d.departmentdesc as core_name,
+       rf.sysuserdesc as reserved_for,
+       pi.sysuserdesc as pi_name,
+       f.fundtype,
+       f.fundnumber,
+       nvl(dmu.orgunitdesc, 'Unknown') as orgunitdesc
+  from U_RESERVATION rsv
+    join s_project p on p.s_projectid = rsv.projectid
+    join INSTRUMENT i on rsv.ressdcid = 'Instrument' and rsv.reskeyid1 = i.instrumentid
+    join DEPARTMENT d on rsv.departmentid  = d.departmentid
+    join DEPARTMENTSYSUSER dsu on dsu.departmentid = d.departmentid
+    join SYSUSER pi on rsv.pi = pi.sysuserid
+    join v_duke_restrict_pi r_pi on r_pi.pi_sysuserid = pi.sysuserid
+    join v_duke_restrict_project r_pr on r_pr.s_projectid = p.s_projectid
+    join U_FUNDSOURCE f  on f.u_fundsourceid = rsv.fundsourceid
+    left outer join SYSUSER rf      on rsv.reservedfor   = rf.sysuserid
+    left outer join DATAMART_USERS dmu on rsv.reservedfor   = dmu.dukeuid
+ where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and r_pi.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and r_pr.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and ($P{SAPPHIRE_START_DATE} is null or rsv.actualstartdate >= $P{SAPPHIRE_START_DATE}) 
+   and ($P{SAPPHIRE_END_DATE} is null or rsv.actualstartdate <= $P{SAPPHIRE_END_DATE})
+   and ($P{QUERY_PI} is null or (rsv.pi is not null and instr($P{QUERY_PI}, rsv.pi || '|') > 0))
+   and rsv.actualusagetime > 0
+ order by rsv.departmentid,
+          i.instrumentid,
+          pi.sysuserdesc,
+          rsv.actualstartdate,
+          rsv.actualstarttime]]>
+	</queryString>
+	<field name="U_RESERVATIONID" class="java.lang.String"/>
+	<field name="CREATEDT" class="java.sql.Timestamp"/>
+	<field name="CREATEBY" class="java.lang.String"/>
+	<field name="DEPARTMENTID" class="java.lang.String"/>
+	<field name="STARTDATE" class="java.sql.Timestamp"/>
+	<field name="STARTTIME" class="java.lang.String"/>
+	<field name="ENDDATE" class="java.sql.Timestamp"/>
+	<field name="ENDTIME" class="java.lang.String"/>
+	<field name="USAGETIME" class="java.math.BigDecimal"/>
+	<field name="ASSISTANCEREQUIREDFLAG" class="java.lang.String"/>
+	<field name="REPEATTYPE" class="java.lang.String"/>
+	<field name="REPEATENDDATE" class="java.sql.Timestamp"/>
+	<field name="REPEATEVERY" class="java.lang.String"/>
+	<field name="RESERVEDFOR" class="java.lang.String"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="USAGESTATUS" class="java.lang.String"/>
+	<field name="BASEDONRESERVATIONID" class="java.lang.String"/>
+	<field name="ACTUALSTARTDATE" class="java.sql.Timestamp"/>
+	<field name="ACTUALSTARTTIME" class="java.lang.String"/>
+	<field name="ACTUALENDDATE" class="java.sql.Timestamp"/>
+	<field name="ACTUALENDTIME" class="java.lang.String"/>
+	<field name="ACTUALUSAGETIME" class="java.math.BigDecimal"/>
+	<field name="PROJECTID" class="java.lang.String"/>
+	<field name="PI" class="java.lang.String"/>
+	<field name="MEMBERSHIP" class="java.lang.String"/>
+	<field name="AFFILIATION" class="java.lang.String"/>
+	<field name="FUNDSOURCEID" class="java.lang.String"/>
+	<field name="RESOURCEGROUPID" class="java.lang.String"/>
+	<field name="RSRCGROUPITEMID" class="java.lang.String"/>
+	<field name="APPROVEDSTARTDATE" class="java.sql.Timestamp"/>
+	<field name="APPROVEDSTARTTIME" class="java.lang.String"/>
+	<field name="APPROVEDENDDATE" class="java.sql.Timestamp"/>
+	<field name="APPROVEDENDTIME" class="java.lang.String"/>
+	<field name="EMAIL" class="java.lang.String"/>
+	<field name="INSTRUMENTID" class="java.lang.String"/>
+	<field name="INSTRUMENTDESC" class="java.lang.String"/>
+	<field name="INSTRUMENTMODELID" class="java.lang.String"/>
+	<field name="CORE_NAME" class="java.lang.String"/>
+	<field name="RESERVED_FOR" class="java.lang.String"/>
+	<field name="PI_NAME" class="java.lang.String"/>
+	<field name="FUNDTYPE" class="java.lang.String"/>
+	<field name="FUNDNUMBER" class="java.lang.String"/>
+	<field name="ORGUNITDESC" class="java.lang.String"/>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<staticText>
+				<reportElement x="1" y="0" width="180" height="14" uuid="fc501524-a67e-4e56-a60e-f65ee0b5ef82">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[INSTRUMENTID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="181" y="0" width="180" height="14" uuid="9385a4be-04ca-4890-9aea-8f9621ef7759">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[MODEL_ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="361" y="0" width="280" height="14" uuid="7ad684f3-d400-493b-89c8-da1389668559">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[INSTRUMENT_DESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2062" y="0" width="100" height="14" uuid="486e791b-8f29-42f0-a2db-d7ec60f447be">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[ACTUAL_HRS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1662" y="0" width="100" height="14" uuid="909f3356-62ba-41c2-8a26-02c6021f0f7f">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[START_DATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1762" y="0" width="100" height="14" uuid="2136ad41-7182-40cd-846c-806e8096fb06">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[START_TIME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1862" y="0" width="100" height="14" uuid="8b59bc2d-7adb-48f4-8b31-4076b9c16328">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[END_DATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1962" y="0" width="100" height="14" uuid="5e49f6f7-1eb6-40c5-9d08-a21657829a92">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[END_TIME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="641" y="0" width="180" height="14" uuid="72a8f312-94ee-4fd6-865e-1352c69655c0">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[PI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="821" y="0" width="380" height="14" uuid="9d9f3d1d-59a0-47e8-af99-7e51c009c06a">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[ORGUNITDESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1201" y="0" width="180" height="14" uuid="54055752-5756-43f8-8a4d-93344c4702e2"/>
+				<text><![CDATA[RESERVED_FOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1382" y="0" width="280" height="14" uuid="0b9ae5fe-7b46-4ae1-baa9-f82b532c0a6a">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[EMAIL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1" y="0" width="180" height="14" uuid="de717ea4-30ff-4cfb-aab2-6a65e8cd41f9">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INSTRUMENTID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="181" y="0" width="180" height="14" uuid="a02ec01d-044a-4eff-80fc-7b0773fe24bb"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INSTRUMENTMODELID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="361" y="0" width="280" height="14" uuid="30761ebb-0a7d-429a-ab5d-1c68ab760768"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INSTRUMENTDESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2062" y="0" width="100" height="14" uuid="64ec9cf7-5649-4599-9d94-34cd8c00c59b">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACTUALUSAGETIME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1662" y="0" width="100" height="14" uuid="47cab04f-2706-4d44-b698-6dabf8d8a61d"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("MM/dd/yyyy").format($F{ACTUALSTARTDATE})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1762" y="0" width="100" height="14" uuid="98a79d88-1de5-4a01-b5e3-dacea1d9ff37">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACTUALSTARTTIME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1862" y="0" width="100" height="14" uuid="ca653c24-9cd4-422f-9956-37ca6d4d6fec"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("MM/dd/yyyy").format($F{ACTUALENDDATE})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1962" y="0" width="100" height="14" uuid="8bc471d4-9a07-4923-b0ef-267319642977">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACTUALENDTIME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="641" y="0" width="180" height="14" uuid="d4f76470-0f4e-4cb8-b71a-173df4083467"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PI_NAME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="821" y="0" width="380" height="14" uuid="221c77fe-fee7-4035-b1ab-10a2634c70cf">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORGUNITDESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1201" y="0" width="180" height="14" uuid="c16b880c-2aac-42e6-830a-d96fae47ab00"/>
+				<textFieldExpression><![CDATA[$F{RESERVED_FOR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1382" y="0" width="280" height="14" uuid="ff9e373e-045b-4210-ada2-0e6bc25b54aa"/>
+				<textFieldExpression><![CDATA[$F{EMAIL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

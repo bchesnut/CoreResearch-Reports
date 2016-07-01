@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_sr_core_service_affiliation_summary" pageWidth="612" pageHeight="792" columnWidth="576" leftMargin="18" rightMargin="18" topMargin="18" bottomMargin="18" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_MEMBERSHIP" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_AFFILIATION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select inv.u_inv_billingid,
+       inv.invcreatedt,
+       inv.fiscalperiod,
+       inv.status,
+       inv.core,
+       inv.pi,
+       inv.fundsource,
+       nvl(inv.invoiceamount,0)   as invoiceamount,
+       nvl(inv.adjustmentvalue,0) as adjustmentvalue,
+       nvl(inv.subsidy,0)         as subsidy,
+       nvl(inv.finalamount,0)     as finalamount,
+       inv.notes,
+       sds.u_sdiserviceid,
+       sds.projectid,
+       nvl(sds.membership,'None') as membership,
+       nvl(sds.affiliation,'None') as affiliation,
+       sds.fromsdcid,
+       case
+         when sds.fromsdcid = 'Reservation'    then rsv.u_reservationid
+         when sds.fromsdcid = 'ServiceRequest' then sr.u_servicerequestid
+       end as reference_number,
+       case
+         when sds.fromsdcid = 'Reservation'    then 1
+         when sds.fromsdcid = 'ServiceRequest' then 2
+         else                                       3
+       end as sds_order,
+       sds.serviceid,
+       sds.servicename,
+       sds.billablequantity,
+       sds.unit,
+       nvl(sds.rate,0)              as rate,
+       nvl(sds.billabletotalcost,0) as billabletotalcost,
+       d.departmentdesc             as core_name,
+       d.u_coregroup                as core_group,
+       d.u_servicerequestsectionheader,
+       d.u_reservationsectionheader,
+       d.u_samplesectionheader,
+       p.projectdesc                as project_name,
+       f.fundtype,
+       f.fundnumber,
+       rsv.actualstartdate,
+       rsv.actualstarttime,
+       rsv.actualendtime,
+       pi.sysuserdesc as pi_name,
+       nvl(dmu.orgunitdesc, 'Unknown') as orgunitdesc,
+       m.membershiplongdesc
+  from U_INV_BILLING inv
+    inner join U_SDISERVICE sds         on inv.u_inv_billingid = sds.invoiceid
+    inner join U_SERVICETASK st         on sds.serviceid       = st.u_servicetaskid
+    inner join DEPARTMENT d             on inv.core            = d.departmentid
+    inner join departmentsysuser dsu    on dsu.departmentid    = d.departmentid
+    inner join S_PROJECT p              on sds.projectid       = p.s_projectid
+    inner join U_FUNDSOURCE f           on inv.fundsource      = f.u_fundsourceid
+    inner join SYSUSER pi               on inv.pi              = pi.sysuserid
+    inner join v_duke_restrict_pi r_pi  on r_pi.pi_sysuserid   = pi.sysuserid
+    left outer join U_SERVICEREQUEST sr on sds.fromkeyid1      = sr.u_servicerequestid
+    left outer join U_RESERVATION rsv   on sds.fromkeyid1      = rsv.u_reservationid
+    left outer join DATAMART_USERS dmu  on inv.pi              = dmu.dukeuid
+    left outer join U_MEMBERSHIP m      on m.u_membershipid    = sds.membership
+ where inv.status     in ('Ready to Bill','Billed','Dispatched')
+   and inv.invcreatedt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and ($P{SAPPHIRE_AFFILIATION} is null  or (sds.affiliation is not null and instr($P{SAPPHIRE_AFFILIATION} || ';', sds.affiliation || ';') > 0))
+   and ($P{SAPPHIRE_MEMBERSHIP} is null   or (sds.membership is not null and instr($P{SAPPHIRE_MEMBERSHIP}, sds.membership || '|') > 0))
+   and dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and r_pi.sysuserid = $P{SAPPHIRE_CurrentUser}
+ order by inv.core,
+          nvl(sds.membership,'None'),
+          sds.affiliation,
+          sds.servicename,
+          rate]]>
+	</queryString>
+	<field name="U_INV_BILLINGID" class="java.lang.String"/>
+	<field name="INVCREATEDT" class="java.sql.Timestamp"/>
+	<field name="FISCALPERIOD" class="java.lang.String"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="CORE" class="java.lang.String"/>
+	<field name="PI" class="java.lang.String"/>
+	<field name="FUNDSOURCE" class="java.lang.String"/>
+	<field name="INVOICEAMOUNT" class="java.math.BigDecimal"/>
+	<field name="ADJUSTMENTVALUE" class="java.math.BigDecimal"/>
+	<field name="SUBSIDY" class="java.math.BigDecimal"/>
+	<field name="FINALAMOUNT" class="java.math.BigDecimal"/>
+	<field name="NOTES" class="java.lang.String"/>
+	<field name="U_SDISERVICEID" class="java.lang.String"/>
+	<field name="PROJECTID" class="java.lang.String"/>
+	<field name="MEMBERSHIP" class="java.lang.String"/>
+	<field name="AFFILIATION" class="java.lang.String"/>
+	<field name="FROMSDCID" class="java.lang.String"/>
+	<field name="REFERENCE_NUMBER" class="java.lang.String"/>
+	<field name="SDS_ORDER" class="java.math.BigDecimal"/>
+	<field name="SERVICEID" class="java.lang.String"/>
+	<field name="SERVICENAME" class="java.lang.String"/>
+	<field name="BILLABLEQUANTITY" class="java.math.BigDecimal"/>
+	<field name="UNIT" class="java.lang.String"/>
+	<field name="RATE" class="java.math.BigDecimal"/>
+	<field name="BILLABLETOTALCOST" class="java.math.BigDecimal"/>
+	<field name="CORE_NAME" class="java.lang.String"/>
+	<field name="CORE_GROUP" class="java.lang.String"/>
+	<field name="U_SERVICEREQUESTSECTIONHEADER" class="java.lang.String"/>
+	<field name="U_RESERVATIONSECTIONHEADER" class="java.lang.String"/>
+	<field name="U_SAMPLESECTIONHEADER" class="java.lang.String"/>
+	<field name="PROJECT_NAME" class="java.lang.String"/>
+	<field name="FUNDTYPE" class="java.lang.String"/>
+	<field name="FUNDNUMBER" class="java.lang.String"/>
+	<field name="ACTUALSTARTDATE" class="java.sql.Timestamp"/>
+	<field name="ACTUALSTARTTIME" class="java.lang.String"/>
+	<field name="ACTUALENDTIME" class="java.lang.String"/>
+	<field name="PI_NAME" class="java.lang.String"/>
+	<field name="ORGUNITDESC" class="java.lang.String"/>
+	<field name="MEMBERSHIPLONGDESC" class="java.lang.String"/>
+	<variable name="BILLABLEQUANTITY_2" class="java.math.BigDecimal" resetType="Group" resetGroup="RATE" calculation="Sum">
+		<variableExpression><![CDATA[$F{BILLABLEQUANTITY}]]></variableExpression>
+	</variable>
+	<variable name="BILLABLETOTALCOST_1" class="java.math.BigDecimal" resetType="Group" resetGroup="RATE" calculation="Sum">
+		<variableExpression><![CDATA[$F{BILLABLETOTALCOST}]]></variableExpression>
+	</variable>
+	<variable name="BILLABLETOTALCOST_2" class="java.math.BigDecimal" resetType="Group" resetGroup="CORE" calculation="Sum">
+		<variableExpression><![CDATA[$F{BILLABLETOTALCOST}]]></variableExpression>
+	</variable>
+	<group name="CORE">
+		<groupExpression><![CDATA[$F{CORE}]]></groupExpression>
+		<groupHeader>
+			<band height="24" splitType="Stretch">
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" x="0" y="0" width="472" height="16" uuid="2edf8c03-4a94-4dbd-b3a5-9f8b2650eae6"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font fontName="SansSerif" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CORE} + ":  " + $F{CORE_NAME}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20" splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<group name="MEMBERSHIPAFFILIATION">
+		<groupExpression><![CDATA[$F{MEMBERSHIPLONGDESC} + $F{AFFILIATION}]]></groupExpression>
+		<groupHeader>
+			<band height="38">
+				<staticText>
+					<reportElement key="staticText" x="1" y="21" width="224" height="13" forecolor="#000000" uuid="dcd9325b-41f0-45e1-bb71-10d076c35388"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font fontName="SansSerif" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Service]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText" x="354" y="21" width="62" height="13" uuid="2d95ed07-f963-4dcf-929a-b6f57da215b2"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" size="8"/>
+					</textElement>
+					<text><![CDATA[Rate]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="35" width="576" height="1" uuid="795373d1-a960-4dc7-b48a-e8e8c1e703ef"/>
+				</line>
+				<staticText>
+					<reportElement x="318" y="21" width="36" height="13" uuid="9b8e7f2c-029c-4412-8779-229526a82085"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Unit]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="254" y="21" width="50" height="13" uuid="410daa0a-c392-44a3-befb-0f9679dd2dc6"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Quantity]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText" x="416" y="21" width="62" height="13" uuid="54b9aa6c-064b-428b-9aec-285c12126e64"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" size="8"/>
+					</textElement>
+					<text><![CDATA[Total Cost]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="0" width="472" height="16" uuid="ed31809a-04fa-4f98-a31f-d55afc99c630"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Membership/Affiliation:  " + $F{MEMBERSHIPLONGDESC} + ($F{AFFILIATION}==null ? "" : ("/" + $F{AFFILIATION}))]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20"/>
+		</groupFooter>
+	</group>
+	<group name="SERVICENAME">
+		<groupExpression><![CDATA[$F{SERVICENAME}]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<group name="RATE">
+		<groupExpression><![CDATA[$F{RATE}]]></groupExpression>
+		<groupHeader>
+			<band height="14" splitType="Stretch">
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" x="354" y="1" width="62" height="13" uuid="70daa51c-8041-49a7-9c8a-0402fec5d598"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[NumberFormat.getCurrencyInstance().format($F{RATE})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" x="1" y="1" width="224" height="13" forecolor="#000000" uuid="323ca77e-2d12-45a5-bb30-295c1199c742"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font fontName="SansSerif" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SERVICENAME}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="318" y="1" width="36" height="13" uuid="bdae0ae9-0c2d-4962-8ca1-311ce0f625c1"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{UNIT}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="RATE">
+					<reportElement x="254" y="1" width="50" height="13" uuid="3da1b579-a382-4c5f-b774-c5723415f0a6"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{BILLABLEQUANTITY_2}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="RATE">
+					<reportElement x="416" y="1" width="62" height="13" uuid="abac083b-a899-4107-94c5-ecd4ed363baf"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[NumberFormat.getCurrencyInstance().format($V{BILLABLETOTALCOST_1})]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto">
+					<reportElement x="483" y="1" width="64" height="13" uuid="9bf40c91-b55a-4b56-87d8-44d8eef84e99"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[NumberFormat.getPercentInstance().format(new Double($V{BILLABLETOTALCOST_2}.doubleValue() == 0.0 ? 0.0 : ($V{BILLABLETOTALCOST_1}.doubleValue()/$V{BILLABLETOTALCOST_2}.doubleValue())))]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="70" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText" x="0" y="20" width="576" height="22" uuid="ea333cfd-5f54-4c35-8ecb-4739cba897c0"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Core Service Summary]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line" positionType="FixRelativeToBottom" x="0" y="46" width="576" height="1" forecolor="#000000" uuid="ac089da8-463d-4e49-9231-b6ba882252c0"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line" x="0" y="1" width="576" height="1" forecolor="#000000" uuid="0ccb2e14-c858-4b64-b5da-720c3fb09f8b"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<image scaleImage="RealSize" isUsingCache="false">
+				<reportElement key="image-1" x="0" y="5" width="139" height="36" uuid="9aca5bd1-2744-4b89-a4c7-bf62a2eaf2d4"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{SAPPHIRE_ReportPath}+"/images/CoreResearchLogo_wt.png"]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textReport" x="0" y="47" width="275" height="14" uuid="bb266ea7-e72d-42a4-ae73-f3b808fa439b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Time Period: " + new SimpleDateFormat("MM/dd/yyyy").format($P{SAPPHIRE_START_DATE}) + " to " + new SimpleDateFormat("MM/dd/yyyy").format($P{SAPPHIRE_END_DATE})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textPageNumber" x="429" y="2" width="109" height="14" uuid="13183c93-1c6b-47e9-bd15-182efb7b12fe"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement key="textTotalPages" x="538" y="2" width="36" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="97a2993f-1189-46f0-8311-732064aba4bb"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line" x="0" y="1" width="576" height="1" forecolor="#000000" uuid="2c06b7c8-e365-439c-843e-5efa14f8117d"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textCurrentDate" x="143" y="16" width="208" height="14" uuid="5b9889e1-7871-4f3f-a83d-4098057834f5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["On " + $P{REPORT_SCRIPTLET}.formatDate(new Date(),2,2)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textCurrentUser" x="143" y="2" width="127" height="14" uuid="ce03abd9-dac2-4074-b915-ae4e14f39876"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generated By " + $P{SAPPHIRE_CurrentUser}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textReport" x="1" y="2" width="127" height="14" uuid="37f6d17a-b689-4896-b064-d1168eb50ec7"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Report " + $P{SAPPHIRE_ReportID} + " v" + $P{SAPPHIRE_ReportVersion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textDatabase" x="1" y="16" width="127" height="14" uuid="c28991cf-2cba-43c2-bd90-c2e1e88907b6"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Database " + $P{SAPPHIRE_DatabaseName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="483" y="16" width="91" height="14" uuid="70a26782-fcff-4f1e-a719-de8c89219ea5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SAPPHIRE_ReportEventID}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

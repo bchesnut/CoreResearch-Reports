@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry exported="true" kind="con" path="net.sf.jasperreports.JR_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="com.jaspersoft.server.JRS_CONTAINER"/>
+	<classpathentry kind="lib" path="//duhsnas-pri/home/bchesnut/Projects/Duke Biobank/LabVantage/Reports/libs/ojdbc7_g.jar"/>
+	<classpathentry kind="lib" path="//duhsnas-pri/home/bchesnut/Projects/Duke Biobank/LabVantage/Reports/libs/sapphire71.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_sr_financial_details" pageWidth="4920" pageHeight="612" orientation="Landscape" columnWidth="4920" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="INVOICE_START_DATE" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="INVOICE_END_DATE" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QUERY_CORE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QUERY_INSTRUMENT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QUERY_SERVICETASK" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QUERY_AFFILIATION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QUERY_MEMBERSHIP" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QUERY_PI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QUERY_PROJECT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QUERY_INV_STATUS" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select sdi.fromsdcid as service_type,
+       sdi.fromkeyid1 as service_id,
+       req.servicerequestdesc as request_title,
+       sdi.affiliation,
+       sdi.membership,
+       m.membershiplongdesc as membership_desc,
+       sdi.core,
+       d.departmentdesc as core_desc,
+       res.resourcegroupid,
+       res.rsrcgroupitemid,
+       res.reskeyid1 as instrument_id,
+       inst.instrumentdesc as instrument_desc,
+       sdi.pi,
+       pi.sysuserdesc as pi_name,
+       sdi.projectid,
+       sdi.fundsource,
+       df.fundcodelongtext as grant_name,
+       f.fundnumber as fund_code,
+       f.fundsourcedesc as project_name,
+       sdi.invoiceid as invoice_id,
+       inv.invcreatedt as invoice_date,
+       inv.status as invoice_status,
+       sdi.serviceid as service_task_id,
+       sdi.servicename as service_task_name,
+       sdi.unit,
+       sdi.billablequantity as quantity,
+       sdi.rate,
+       sdi.billabletotalcost
+  from u_sdiservice sdi
+    join u_inv_billing inv on inv.u_inv_billingid = sdi.invoiceid
+    join s_project p on p.s_projectid = sdi.projectid
+    join u_fundsource f on f.u_fundsourceid = sdi.fundsource
+    join sysuser pi on pi.sysuserid = sdi.pi
+    join department d on d.departmentid = sdi.core
+    join departmentsysuser dsu on dsu.departmentid = d.departmentid
+    join v_duke_restrict_pi r_pi on r_pi.pi_sysuserid = pi.sysuserid
+    join v_duke_restrict_project r_pr on r_pr.s_projectid = p.s_projectid
+    left join u_membership m on m.u_membershipid = sdi.membership
+    left join u_servicerequest req on req.u_servicerequestid = sdi.fromkeyid1
+    left join u_reservation res on res.u_reservationid = sdi.fromkeyid1
+    left join instrument inst on inst.instrumentid = res.reskeyid1
+    left join datamart_fundcodes df on df.fundcode = f.fundnumber
+ where inv.status is not null
+   and dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and r_pi.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and r_pr.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and ($P{INVOICE_START_DATE} is null or inv.invcreatedt >= $P{INVOICE_START_DATE})
+   and ($P{INVOICE_END_DATE} is null   or inv.invcreatedt <= $P{INVOICE_END_DATE})
+   and ($P{QUERY_CORE} is null         or (sdi.core is not null and instr($P{QUERY_CORE}, sdi.core || '|') > 0))
+   and ($P{QUERY_INSTRUMENT} is null   or (res.reskeyid1 is not null and instr($P{QUERY_INSTRUMENT}, res.reskeyid1 || '|') > 0))
+   and ($P{QUERY_SERVICETASK} is null  or (sdi.serviceid is not null and instr($P{QUERY_SERVICETASK}, sdi.serviceid || '|') > 0))
+   and ($P{QUERY_AFFILIATION} is null  or (sdi.affiliation is not null and instr($P{QUERY_AFFILIATION} || ';', sdi.affiliation || ';') > 0))
+   and ($P{QUERY_MEMBERSHIP} is null   or (sdi.membership is not null and instr($P{QUERY_MEMBERSHIP}, sdi.membership || '|') > 0))
+   and ($P{QUERY_PI} is null           or (sdi.pi is not null and instr($P{QUERY_PI}, sdi.pi || '|') > 0))
+   and ($P{QUERY_PROJECT} is null      or (sdi.projectid is not null and instr($P{QUERY_PROJECT}, sdi.projectid || '|') > 0))
+   and ($P!{QUERY_INV_STATUS} is null   or inv.status in ($P!{QUERY_INV_STATUS}))
+ order by sdi.core,
+          sdi.fromsdcid,
+          sdi.fromkeyid1]]>
+	</queryString>
+	<field name="SERVICE_TYPE" class="java.lang.String"/>
+	<field name="SERVICE_ID" class="java.lang.String"/>
+	<field name="REQUEST_TITLE" class="java.lang.String"/>
+	<field name="AFFILIATION" class="java.lang.String"/>
+	<field name="MEMBERSHIP" class="java.lang.String"/>
+	<field name="MEMBERSHIP_DESC" class="java.lang.String"/>
+	<field name="CORE" class="java.lang.String"/>
+	<field name="CORE_DESC" class="java.lang.String"/>
+	<field name="RESOURCEGROUPID" class="java.lang.String"/>
+	<field name="RSRCGROUPITEMID" class="java.lang.String"/>
+	<field name="INSTRUMENT_ID" class="java.lang.String"/>
+	<field name="INSTRUMENT_DESC" class="java.lang.String"/>
+	<field name="PI" class="java.lang.String"/>
+	<field name="PI_NAME" class="java.lang.String"/>
+	<field name="PROJECTID" class="java.lang.String"/>
+	<field name="FUNDSOURCE" class="java.lang.String"/>
+	<field name="GRANT_NAME" class="java.lang.String"/>
+	<field name="FUND_CODE" class="java.lang.String"/>
+	<field name="PROJECT_NAME" class="java.lang.String"/>
+	<field name="INVOICE_ID" class="java.lang.String"/>
+	<field name="INVOICE_DATE" class="java.sql.Timestamp"/>
+	<field name="INVOICE_STATUS" class="java.lang.String"/>
+	<field name="SERVICE_TASK_ID" class="java.lang.String"/>
+	<field name="SERVICE_TASK_NAME" class="java.lang.String"/>
+	<field name="UNIT" class="java.lang.String"/>
+	<field name="QUANTITY" class="java.math.BigDecimal"/>
+	<field name="RATE" class="java.math.BigDecimal"/>
+	<field name="BILLABLETOTALCOST" class="java.math.BigDecimal"/>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<printWhenExpression><![CDATA[new Boolean($V{PAGE_NUMBER}.intValue() == 1)]]></printWhenExpression>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="14" uuid="ee711677-39b8-438c-a1a0-8f298978f9cb"/>
+				<text><![CDATA[SERVICE_TYPE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="100" height="14" uuid="d48d911c-5b45-4e52-b205-3669251791e1"/>
+				<text><![CDATA[SERVICE_ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="0" width="400" height="14" uuid="abf30b10-7149-4ba5-9680-024ee363752a"/>
+				<text><![CDATA[REQUEST_TITLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="600" y="0" width="100" height="14" uuid="f142b425-32b3-4b0b-af86-3926b39b5152"/>
+				<text><![CDATA[AFFILIATION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="700" y="0" width="100" height="14" uuid="8f295c81-7976-4388-b3e8-9c01b3664ee7"/>
+				<text><![CDATA[MEMBERSHIP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="800" y="0" width="110" height="14" uuid="c31958a1-5d2e-4e9f-bec7-7514bd42d1ae"/>
+				<text><![CDATA[MEMBERSHIP_DESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="910" y="0" width="100" height="14" uuid="699ae694-c7c9-41f1-99ec-5dce56807c90"/>
+				<text><![CDATA[CORE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1010" y="0" width="280" height="14" uuid="c41f4cb3-7d37-40b2-862c-399e264424fd"/>
+				<text><![CDATA[CORE_DESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1290" y="0" width="120" height="14" uuid="4ff7ddcb-9a90-4ec6-9aea-e3cc7984129d"/>
+				<text><![CDATA[RESOURCEGROUPID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1410" y="0" width="280" height="14" uuid="da99c2f2-53a8-488e-86d1-ab9fc2002e8e"/>
+				<text><![CDATA[RSRCGROUPITEMID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1690" y="0" width="180" height="14" uuid="c06cc7d2-7688-4854-b152-bcc070dc3a53"/>
+				<text><![CDATA[INSTRUMENT_ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1870" y="0" width="280" height="14" uuid="d1f52bf0-2735-4c0a-8ebc-0719be656919"/>
+				<text><![CDATA[INSTRUMENT_DESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2150" y="0" width="100" height="14" uuid="782de510-58fb-4e87-add5-f51b47c107eb"/>
+				<text><![CDATA[PI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2250" y="0" width="180" height="14" uuid="ca9e259a-3165-477a-98b1-97ce7a103df8"/>
+				<text><![CDATA[PI_NAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2430" y="0" width="180" height="14" uuid="060193ea-ae50-4fde-aee6-67d345aca8a9"/>
+				<text><![CDATA[PROJECTID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2610" y="0" width="180" height="14" uuid="3652224d-3e37-47d9-bbef-75eee5048f06"/>
+				<text><![CDATA[FUNDSOURCE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3310" y="0" width="100" height="14" uuid="fd3aa284-0d8a-425d-8d0c-a428e3f38d10"/>
+				<text><![CDATA[FUND_CODE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3410" y="0" width="320" height="14" uuid="2f139f68-dff5-4869-9bfc-63f15b188fd4"/>
+				<text><![CDATA[PROJECT_NAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3730" y="0" width="180" height="14" uuid="533ca240-c0c8-407e-8360-ff82538a924a"/>
+				<text><![CDATA[INVOICE_ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3910" y="0" width="100" height="14" uuid="3595d5de-c2ab-49f7-a992-286079d7f520"/>
+				<text><![CDATA[INVOICE_DATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4010" y="0" width="100" height="14" uuid="87897306-4724-4239-b39c-ff538a9270e5"/>
+				<text><![CDATA[INVOICE_STATUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4110" y="0" width="100" height="14" uuid="0cc72a2d-b824-459e-b744-101b33f2a0db"/>
+				<text><![CDATA[SERVICE_TASK_ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4490" y="0" width="100" height="14" uuid="b15a92bd-bf20-4b65-9162-a509bee7569a"/>
+				<text><![CDATA[UNIT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4590" y="0" width="100" height="14" uuid="40efaa4a-d034-4507-a3cf-d5d04c1abfe6"/>
+				<text><![CDATA[QUANTITY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4690" y="0" width="100" height="14" uuid="ca0a1472-1e5e-415b-ae05-be8d75eb7700"/>
+				<text><![CDATA[RATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4790" y="0" width="117" height="14" uuid="dfb9a6ba-2ea4-42e9-acf0-6977ae60c5b5"/>
+				<text><![CDATA[BILLABLETOTALCOST]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4210" y="0" width="280" height="14" uuid="71120c14-57d9-48e8-9a90-94e1d0e59712"/>
+				<text><![CDATA[SERVICE_TASK_NAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2790" y="0" width="520" height="14" uuid="ee2dd6c5-c107-4f96-9b8a-bdc0cfd0a420"/>
+				<text><![CDATA[GRANT_NAME]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="100" height="14" uuid="42fa052e-61e1-4b8b-8ace-dafda12c9864"/>
+				<textFieldExpression><![CDATA[$F{SERVICE_TYPE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="100" y="0" width="100" height="14" uuid="24b485cd-195f-4dc6-94a0-2ba8ca3b4fa2"/>
+				<textFieldExpression><![CDATA[$F{SERVICE_ID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="200" y="0" width="400" height="14" uuid="a05cd255-232b-47d1-8a2e-af8995279436"/>
+				<textFieldExpression><![CDATA[$F{REQUEST_TITLE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="600" y="0" width="100" height="14" uuid="939a1097-560a-4ec8-8538-6e33325883b8"/>
+				<textFieldExpression><![CDATA[$F{AFFILIATION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="700" y="0" width="100" height="14" uuid="655ad19f-d089-4754-b741-a8c8b6509c52"/>
+				<textFieldExpression><![CDATA[$F{MEMBERSHIP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="800" y="0" width="110" height="14" uuid="bb308f88-33e0-4660-80fd-c20ac56a10b6"/>
+				<textFieldExpression><![CDATA[$F{MEMBERSHIP_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="910" y="0" width="100" height="14" uuid="6c12e7c2-0f03-4b8c-938e-86f8880f1fe2"/>
+				<textFieldExpression><![CDATA[$F{CORE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1010" y="0" width="280" height="14" uuid="0e3e1b7f-38ff-47a9-8b47-be7f819d7534"/>
+				<textFieldExpression><![CDATA[$F{CORE_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1290" y="0" width="120" height="14" uuid="8b7a2104-2a00-4e26-bd04-37edcf2254e9"/>
+				<textFieldExpression><![CDATA[$F{RESOURCEGROUPID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1410" y="0" width="280" height="14" uuid="c190f4d8-1e92-42b9-8a07-8d6052bf4646"/>
+				<textFieldExpression><![CDATA[$F{RSRCGROUPITEMID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1690" y="0" width="180" height="14" uuid="4548f11f-1f46-4346-94ea-f16c82119171"/>
+				<textFieldExpression><![CDATA[$F{INSTRUMENT_ID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1870" y="0" width="280" height="14" uuid="1accdfe8-b8a5-4871-8c25-a3b8dd68124c"/>
+				<textFieldExpression><![CDATA[$F{INSTRUMENT_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2150" y="0" width="100" height="14" uuid="d91423ee-ae31-437f-bb02-2c1b817a462e"/>
+				<textFieldExpression><![CDATA[$F{PI}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2250" y="0" width="180" height="14" uuid="425347bb-e040-4573-90b6-fa55c7ac8547"/>
+				<textFieldExpression><![CDATA[$F{PI_NAME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2430" y="0" width="180" height="14" uuid="56629af0-1d44-48fb-be29-1e6a6c19f8cc"/>
+				<textFieldExpression><![CDATA[$F{PROJECTID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2610" y="0" width="180" height="14" uuid="c0c00163-ab47-479c-a73f-9452f09600e0"/>
+				<textFieldExpression><![CDATA[$F{FUNDSOURCE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3310" y="0" width="100" height="14" uuid="5de8f702-f1a0-49a9-92af-08eb9c4f7c2a"/>
+				<textFieldExpression><![CDATA[$F{FUND_CODE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3410" y="0" width="320" height="14" uuid="2f7c4cf9-ee44-4b5d-a637-85fe7bf76ab3"/>
+				<textFieldExpression><![CDATA[$F{PROJECT_NAME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3730" y="0" width="180" height="14" uuid="b89a2989-cd50-4527-a459-43583de3b566"/>
+				<textFieldExpression><![CDATA[$F{INVOICE_ID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3910" y="0" width="100" height="14" uuid="f99e63e3-2ca2-47f7-b836-5a36d33446bd"/>
+				<textFieldExpression><![CDATA[$F{INVOICE_DATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4010" y="0" width="100" height="14" uuid="f5b4e7cc-5cd7-4f55-9ef7-369d3994780d"/>
+				<textFieldExpression><![CDATA[$F{INVOICE_STATUS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4110" y="0" width="100" height="14" uuid="1220ad76-d83e-498a-ba48-f8250c0edd53"/>
+				<textFieldExpression><![CDATA[$F{SERVICE_TASK_ID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4490" y="0" width="100" height="14" uuid="452e5c52-fb17-4d70-b2c8-51cea9a56631"/>
+				<textFieldExpression><![CDATA[$F{UNIT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4590" y="0" width="100" height="14" uuid="37b6dd1b-e58f-4071-8b20-6aea1064ae9b"/>
+				<textFieldExpression><![CDATA[$F{QUANTITY}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4690" y="0" width="100" height="14" uuid="a9dabb8e-d8e2-4449-a740-d34611a8a1ff"/>
+				<textFieldExpression><![CDATA[$F{RATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4790" y="0" width="117" height="14" uuid="dc263c72-0987-445f-8456-0256b72aa3f9"/>
+				<textFieldExpression><![CDATA[$F{BILLABLETOTALCOST}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4210" y="0" width="280" height="14" uuid="82820f32-1a4d-4063-94f6-750cb4d4c84c"/>
+				<textFieldExpression><![CDATA[$F{SERVICE_TASK_NAME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2790" y="0" width="520" height="14" uuid="6ed1822a-1566-4923-a46e-db53c850cc9e"/>
+				<textFieldExpression><![CDATA[$F{GRANT_NAME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
