@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
-<!-- 2016-05-11T07:16:30 -->
+<!-- 2016-06-30T15:52:38 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_patient_upcoming_visit" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="756" leftMargin="18" rightMargin="18" topMargin="18" bottomMargin="18" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -8,6 +8,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LVQA1"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -90,8 +91,8 @@
        d.departmentdesc,
        sysuser.sysuserdesc
   from s_participant p
-    join u_consentparticipntmap ucpm on p.s_participantid = ucpm.participantid
-    join u_consent c on c.u_consentid = ucpm.consentid
+    left outer join u_consentparticipntmap ucpm on p.s_participantid = ucpm.participantid
+    left outer join u_consent c on c.u_consentid = ucpm.consentid
     join s_study s on s.s_studyid = p.sstudyid
     join s_participantevent pe on p.s_participantid = pe.participantid
     join department d on s.securitydepartment = d.departmentid
@@ -100,7 +101,7 @@
 where dsu.sysuserid = $P{SAPPHIRE_CurrentUser} 
    and instr( $P{STUDY_ID}  || ';', p.sstudyid || ';') > 0
    and pe.eventstatus = 'Pending'
-   and pe.eventdt between $P{SAPPHIRE_START_DATE} and  $P{SAPPHIRE_END_DATE}
+   and pe.eventdt  between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    order by p.u_mrn, pe.eventdt]]>
 	</queryString>
 	<field name="STUDYDESC" class="java.lang.String"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
-<!-- 2016-06-30T10:26:36 -->
+<!-- 2016-06-30T15:28:03 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_brpc_samples_by_count" pageWidth="612" pageHeight="792" columnWidth="576" leftMargin="18" rightMargin="18" topMargin="18" bottomMargin="18" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -84,9 +84,9 @@
   join department d on d.departmentid = study.securitydepartment
   join departmentsysuser dsu on dsu.departmentid = d.departmentid
   join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid
- where 
-   instr($P{STUDY_ID} || ';', study.s_studyid || ';') > 0
-   and s.receiveddt between  $P{SAPPHIRE_START_DATE} and  $P{SAPPHIRE_END_DATE} 
+ where s.receiveddt  between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+  and ($P{STUDY_ID} is null or ($P{STUDY_ID} is not null and instr($P{STUDY_ID} || ';', study.s_studyid || ';') > 0))
+  
    and  dsu.sysuserid= $P{SAPPHIRE_CurrentUser} 
      
  group by study.s_studyid,
