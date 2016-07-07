@@ -127,7 +127,7 @@
     left outer join SYSUSER pi          on inv.pi              = pi.sysuserid
     left outer join DATAMART_USERS dmu  on inv.pi              = dmu.dukeuid
  where inv.status     in ('Ready to Bill','Billed','Dispatched')
-   and inv.invcreatedt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and inv.invcreatedt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    and ((sds.affiliation = $P{SAPPHIRE_AFFILIATION}) or
         (nvl($P{SAPPHIRE_AFFILIATION},'AnyAffiliation') = 'AnyAffiliation'))
    and exists (

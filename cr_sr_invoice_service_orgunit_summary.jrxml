@@ -126,7 +126,7 @@
     left outer join U_RESERVATION rsv   on sds.fromkeyid1      = rsv.u_reservationid
     left outer join DATAMART_USERS dmu  on inv.pi              = dmu.dukeuid
  where inv.status     in ('Ready to Bill','Billed','Dispatched')
-   and inv.invcreatedt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and inv.invcreatedt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    and dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
    and r_pi.sysuserid = $P{SAPPHIRE_CurrentUser}
  order by inv.core,

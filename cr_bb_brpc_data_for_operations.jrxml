@@ -88,7 +88,7 @@
       from s_participant p 
              join u_consentparticipntmap cp on p.s_participantid = cp.participantid
      where p.sstudyid = $P{STUDY_ID}
-       and cp.consenteddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+       and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
        and cp.consentflag in ('Yes')
     union all
     select 'Events' as rtext,
@@ -97,7 +97,7 @@
       from s_participant p
              join s_participantevent pe on pe.participantid = p.s_participantid
      where p.sstudyid = $P{STUDY_ID}
-       and pe.eventdt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+       and pe.eventdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
     union all
     select 'Tissue Samples' as rtext,
            30 as rsort,
@@ -107,7 +107,7 @@
              join s_participant p on p.s_participantid = sf.participantid
              join s_sampletype st on st.s_sampletypeid = s.sampletypeid
      where p.sstudyid = $P{STUDY_ID}
-       and s.receiveddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+       and s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
        and st.u_tissueflag = 'Y'
     union all
     select 'Slides' as rtext,
@@ -118,7 +118,7 @@
              join s_participant p on p.s_participantid = sf.participantid
              join trackitem ti on ti.linksdcid = 'Sample' and ti.linkkeyid1 = s.s_sampleid
      where p.sstudyid = $P{STUDY_ID}
-       and s.confirmeddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+       and s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
        and lower(ti.containertypeid) in ('slide')
     union all
     select 'RNA Samples' as rtext,
@@ -128,7 +128,7 @@
              join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
              join s_participant p on p.s_participantid = sf.participantid
      where p.sstudyid = $P{STUDY_ID}
-       and s.confirmeddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+       and s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
        and lower(s.sampletypeid) = 'total rna'
     union all
     select 'DNA Samples' as rtext,
@@ -138,7 +138,7 @@
              join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
              join s_participant p on p.s_participantid = sf.participantid
      where p.sstudyid = $P{STUDY_ID}
-       and s.confirmeddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+       and s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
        and lower(s.sampletypeid) = 'dna'
     union all
     select 'Whole Blood Samples' as rtext,
@@ -148,7 +148,7 @@
              join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
              join s_participant p on p.s_participantid = sf.participantid
      where p.sstudyid = $P{STUDY_ID}
-       and s.receiveddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+       and s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
        and lower(s.sampletypeid) = 'whole blood'
     union all
     select 'Tissue Collection Success Rate' as rtext,
@@ -165,7 +165,7 @@
             from s_participant p
                    join s_participantevent pe on pe.participantid = p.s_participantid
            where p.sstudyid = $P{STUDY_ID}
-             and pe.eventdt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+             and pe.eventdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
              -- Event with Tissue sample as part of collection
              and exists (
                select *
@@ -180,7 +180,7 @@
             from s_participant p
                    join s_participantevent pe on pe.participantid = p.s_participantid
            where p.sstudyid = $P{STUDY_ID}
-             and pe.eventdt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+             and pe.eventdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
              -- Event with Tissue sample as part of collection
              and exists (
                select *
@@ -217,7 +217,7 @@
             from s_participant p
                    join s_participantevent pe on pe.participantid = p.s_participantid
            where p.sstudyid = $P{STUDY_ID}
-             and pe.eventdt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+             and pe.eventdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
              -- Event with Blood sample as part of collection
              and exists (
                select *
@@ -231,7 +231,7 @@
             from s_participant p
                    join s_participantevent pe on pe.participantid = p.s_participantid
            where p.sstudyid = $P{STUDY_ID}
-             and pe.eventdt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+             and pe.eventdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
              -- Event with Blood sample as part of collection
              and exists (
                select *

@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
+<!-- 2016-07-05T12:30:55 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_brpc_Samples_By_WorkingGroup" pageWidth="2412" pageHeight="612" orientation="Landscape" columnWidth="2412" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LVQA1"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date"/>
+	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
+	<parameter name="WORKING_GROUP" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select sysuser.sysuserdesc,
+       d.departmentdesc,
+       p.externalparticipantid,
+       p.sstudyid as StudyID,
+       p.u_mrn,
+       alias.aliasid,
+       (select listagg(irbid, ', ') within group (order by irbid)
+          from (
+            select distinct 
+                   cp.participantid,
+                   irb.irbid
+              from u_consentparticipntmap cp
+                left outer join u_consent c on c.u_consentid = cp.consentid
+                left outer join u_sdiirb irb on c.sdiirbid = irb.u_sdiirbid
+           )
+         where participantid = p.s_participantid
+       ) as protocol,
+       rc.restrictclassdesc,
+       sf.COLLECTMETHODID as collectmethod,
+       pd.pathdiagnosisid,
+       s.s_sampleid,
+       s.u_sponsorid,
+       anat_site.tissue_desc as anatomic_site,
+       s.u_bodysiteoforigin,
+       s.sampletypeid,
+       s.receiveddt,
+       s.u_processingdelay,
+       round((s.u_processeddt - sf.collectiondt) * 1440,0) as minutes,
+       sf.u_grossappearance,
+       s.u_histologicdiag,
+       su.labelpath,
+       pk.s_packageid,
+       pk.packagestatus as Shipped,
+       pk.createdt,
+       pk.moddt,
+       pk.recipientdepartmentid,
+       sf.COLLECTIONDT,
+       body_site.tissue_desc as body_site,
+       s.u_processeddt
+  from s_sample s
+    join s_samplefamily sf on s.samplefamilyid = sf.s_samplefamilyid
+    join s_participantevent pe on sf.participanteventid = pe.s_participanteventid
+    join s_participant p on sf.participantid = p.S_PARTICIPANTID
+    left outer join s_restrictclass rc on rc.s_restrictclassid = sf.restrictclassid
+    left outer join s_package pk on sf.sstudyid=pk.SSTUDYID
+    left outer join u_pathdiagnosis pd on pe.s_participanteventid=pd.S_PARTICIPANTEVENTID
+    left outer join v_duke_tissuetree anat_site on anat_site.s_tissueid = sf.tissueid
+    left outer join v_duke_tissuetree body_site on body_site.s_tissueid = s.u_bodysiteoforigin
+    left outer join trackitem t on t.linksdcid = 'Sample' and t.linkkeyid1 = s.s_sampleid
+    left outer join storageunit su on su.storageunitid = t.currentstorageunitid
+    left outer join sdialias alias on p.s_participantid=alias.keyid1
+    join department d on s.securitydepartment = d.departmentid
+    join departmentsysuser dsu on dsu.departmentid = d.departmentid
+    join sysuser on sysuser.sysuserid = dsu.sysuserid
+where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+and (($P{WORKING_GROUP} is null and sf.restrictclassid is null) or ($P{WORKING_GROUP} is not null and sf.restrictclassid is not null and instr($P{WORKING_GROUP} || ';', sf.restrictclassid || ';') > 0))
+and sf.COLLECTIONDT between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+order by p.externalparticipantid, sf.COLLECTIONDT]]>
+	</queryString>
+	<field name="SYSUSERDESC" class="java.lang.String"/>
+	<field name="DEPARTMENTDESC" class="java.lang.String"/>
+	<field name="EXTERNALPARTICIPANTID" class="java.lang.String"/>
+	<field name="STUDYID" class="java.lang.String"/>
+	<field name="U_MRN" class="java.lang.String"/>
+	<field name="ALIASID" class="java.lang.String"/>
+	<field name="PROTOCOL" class="java.lang.String"/>
+	<field name="RESTRICTCLASSDESC" class="java.lang.String"/>
+	<field name="COLLECTMETHOD" class="java.lang.String"/>
+	<field name="PATHDIAGNOSISID" class="java.lang.String"/>
+	<field name="S_SAMPLEID" class="java.lang.String"/>
+	<field name="U_SPONSORID" class="java.lang.String"/>
+	<field name="ANATOMIC_SITE" class="java.lang.String"/>
+	<field name="U_BODYSITEOFORIGIN" class="java.lang.String"/>
+	<field name="SAMPLETYPEID" class="java.lang.String"/>
+	<field name="RECEIVEDDT" class="java.sql.Timestamp"/>
+	<field name="U_PROCESSINGDELAY" class="java.math.BigDecimal"/>
+	<field name="MINUTES" class="java.math.BigDecimal"/>
+	<field name="U_GROSSAPPEARANCE" class="java.lang.String"/>
+	<field name="U_HISTOLOGICDIAG" class="java.lang.String"/>
+	<field name="LABELPATH" class="java.lang.String"/>
+	<field name="S_PACKAGEID" class="java.lang.String"/>
+	<field name="SHIPPED" class="java.lang.String"/>
+	<field name="CREATEDT" class="java.sql.Timestamp"/>
+	<field name="MODDT" class="java.sql.Timestamp"/>
+	<field name="RECIPIENTDEPARTMENTID" class="java.lang.String"/>
+	<field name="COLLECTIONDT" class="java.sql.Timestamp"/>
+	<field name="BODY_SITE" class="java.lang.String"/>
+	<field name="U_PROCESSEDDT" class="java.sql.Timestamp"/>
+	<group name="GroupRestrictionClass">
+		<groupExpression><![CDATA[$F{RESTRICTCLASSDESC}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<columnHeader>
+		<band height="30">
+			<staticText>
+				<reportElement x="0" y="0" width="124" height="30" uuid="e993940a-7efc-49ac-9a98-27960cc02969"/>
+				<text><![CDATA[External Participant ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="124" y="0" width="104" height="30" uuid="1db6320c-03dd-45fd-925e-0f3f5d35cfff"/>
+				<text><![CDATA[Study ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="228" y="0" width="104" height="30" uuid="30ee21a6-9e5e-4338-9bcd-d8669edc5638"/>
+				<text><![CDATA[MRN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="332" y="0" width="104" height="30" uuid="8bb131e6-7858-4b5b-9b52-0ab04ca5d7e4"/>
+				<text><![CDATA[Participant Alias ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="436" y="0" width="104" height="30" uuid="e2e62d41-56e0-4c42-8f63-c88687af481d"/>
+				<text><![CDATA[Protocol]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="540" y="0" width="104" height="30" uuid="ff454295-3574-44df-99c6-3a9f662be597"/>
+				<text><![CDATA[Working Group]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="644" y="0" width="104" height="30" uuid="d494986b-72fb-4212-af88-2dae59331167"/>
+				<text><![CDATA[Collection Method]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="748" y="0" width="104" height="30" uuid="55b12e91-7f97-46c9-887c-b38e1977536f"/>
+				<text><![CDATA[Pathological Diagnosis]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="852" y="0" width="104" height="30" uuid="41ea93a0-cc66-4e1e-8eec-cb943b2ca7d5"/>
+				<text><![CDATA[LV Sample ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="956" y="0" width="104" height="30" uuid="4bf4c475-d30c-4a6a-a262-8d9e74ab3566"/>
+				<text><![CDATA[Sponsor Sample ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1060" y="0" width="104" height="30" uuid="a8429893-2ba0-440f-bf34-5018f894e144"/>
+				<text><![CDATA[Anatomic Site of Finding]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1164" y="0" width="104" height="30" uuid="34ec2673-2c5c-4fda-b174-abe8a12abfc1"/>
+				<text><![CDATA[Body Site of Origin]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1268" y="0" width="104" height="30" uuid="455ae358-50f3-44c0-a65c-09de4025386c"/>
+				<text><![CDATA[Sample Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1372" y="0" width="104" height="30" uuid="a373f96f-3cd2-47c8-8fee-a8e6aaea5bbe"/>
+				<text><![CDATA[Collection Date/Time]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1476" y="0" width="104" height="30" uuid="c48dde70-37b1-4cf8-b971-63965ce068bb"/>
+				<text><![CDATA[Cold Ischemia Time (min)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1580" y="0" width="104" height="30" uuid="56c91788-9d6a-4feb-b0a7-dda9171c96f2"/>
+				<text><![CDATA[Time to Process (min)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1684" y="0" width="104" height="30" uuid="a4a93ed8-f8f6-4aad-a1d3-0db81356b85f"/>
+				<text><![CDATA[Gross Appearance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1788" y="0" width="104" height="30" uuid="f32c2109-c95d-458f-8889-d8ee6ab56af4"/>
+				<text><![CDATA[Histologic Diagnosis]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1892" y="0" width="104" height="30" uuid="958b6632-c70f-478e-ac1a-8fb5721f3231"/>
+				<text><![CDATA[Storage Location Path]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1996" y="0" width="104" height="30" uuid="76bf4185-8f02-4933-ad3d-a4c42fedcf4e"/>
+				<text><![CDATA[Package ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2100" y="0" width="104" height="30" uuid="cf2cf19b-e1e1-40a1-b239-093d08df1623"/>
+				<text><![CDATA[Shipped?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2204" y="0" width="104" height="30" uuid="4dec3ba8-acca-4dbb-bb59-df4df60f0733"/>
+				<text><![CDATA[Ship Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2308" y="0" width="104" height="30" uuid="1cb08949-fb5a-4f46-bc49-ca179c507994"/>
+				<text><![CDATA[Destination Name]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="124" height="30" uuid="3597b38d-55db-4245-aff3-fa70b0ecb0ea"/>
+				<textFieldExpression><![CDATA[$F{EXTERNALPARTICIPANTID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="124" y="0" width="104" height="30" uuid="4b696426-2cf2-4eb1-aa2a-ca503e8e800d"/>
+				<textFieldExpression><![CDATA[$F{STUDYID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="228" y="0" width="104" height="30" uuid="a3cf1ad0-8cf5-4e43-aaed-f003d4158a5b"/>
+				<textFieldExpression><![CDATA[$F{U_MRN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="332" y="0" width="104" height="30" uuid="f5417525-331a-48d0-b722-1c88c8df41c1"/>
+				<textFieldExpression><![CDATA[$F{ALIASID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="644" y="0" width="104" height="30" uuid="628b5206-ae77-4037-b814-3d2dbc8a39c9"/>
+				<textFieldExpression><![CDATA[$F{COLLECTMETHOD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="748" y="0" width="104" height="30" uuid="386f1609-25e7-4f18-82dd-919474909fad"/>
+				<textFieldExpression><![CDATA[$F{PATHDIAGNOSISID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="852" y="0" width="104" height="30" uuid="255a7212-348d-4e94-ab31-5bbd261b1a7d"/>
+				<textFieldExpression><![CDATA[$F{S_SAMPLEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="956" y="0" width="104" height="30" uuid="0c251eee-8eab-460b-a459-6ce0e0ed73aa"/>
+				<textFieldExpression><![CDATA[$F{U_SPONSORID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1060" y="0" width="104" height="30" uuid="c384ec00-a228-45a4-9cad-c4c926e16fa3"/>
+				<textFieldExpression><![CDATA[$F{ANATOMIC_SITE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1164" y="0" width="104" height="30" uuid="c5a777e6-b308-4cb6-970c-8600a7a39d9b"/>
+				<textFieldExpression><![CDATA[$F{U_BODYSITEOFORIGIN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1268" y="0" width="104" height="30" uuid="64c39f56-0ed1-4b31-b393-dd213c389504"/>
+				<textFieldExpression><![CDATA[$F{SAMPLETYPEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1372" y="0" width="104" height="30" uuid="76bb8a59-620e-4dce-b64e-c525f2ea1958"/>
+				<textFieldExpression><![CDATA[$F{RECEIVEDDT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1476" y="0" width="104" height="30" uuid="9de896b0-fa4a-43fc-b15f-5d10a40e578b"/>
+				<textFieldExpression><![CDATA[$F{U_PROCESSINGDELAY}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1580" y="0" width="104" height="30" uuid="480ba00d-6aa0-4367-bb38-a2d49b1098b3"/>
+				<textFieldExpression><![CDATA[$F{MINUTES}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1684" y="0" width="104" height="30" uuid="aaa6cd0e-9502-4448-9e7a-4ce55310aa03"/>
+				<textFieldExpression><![CDATA[$F{U_GROSSAPPEARANCE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1788" y="0" width="104" height="30" uuid="f65953ca-ca09-4c89-b4c9-47e456e53633"/>
+				<textFieldExpression><![CDATA[$F{U_HISTOLOGICDIAG}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1892" y="0" width="104" height="30" uuid="38ba1b04-c050-401a-83d1-737325d454fe"/>
+				<textFieldExpression><![CDATA[$F{LABELPATH}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1996" y="0" width="104" height="30" uuid="17bca4bd-fb10-4cb2-a97d-91bd9f45043c"/>
+				<textFieldExpression><![CDATA[$F{S_PACKAGEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2204" y="0" width="104" height="30" uuid="80561cfa-36f9-4ecd-9c3a-51ca19315a38"/>
+				<textFieldExpression><![CDATA[$F{CREATEDT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2308" y="0" width="104" height="30" uuid="de181167-0b79-4247-9b04-3ba2c1583f32"/>
+				<textFieldExpression><![CDATA[$F{RECIPIENTDEPARTMENTID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="436" y="0" width="104" height="30" uuid="b8a7e37e-1333-467d-aad4-0f8e3398a00d"/>
+				<textFieldExpression><![CDATA[$F{PROTOCOL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2100" y="0" width="104" height="30" uuid="ab124ed4-1772-4f00-8091-80bf0b4541f5">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{SHIPPED}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="542" y="0" width="104" height="30" uuid="8dd8559d-39a2-4c63-a835-c3186751414e"/>
+				<textFieldExpression><![CDATA[$F{RESTRICTCLASSDESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

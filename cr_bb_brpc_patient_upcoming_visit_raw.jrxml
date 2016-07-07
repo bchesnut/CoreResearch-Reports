@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
-<!-- 2016-05-11T07:16:30 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_patient_upcoming_visit" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="756" leftMargin="18" rightMargin="18" topMargin="18" bottomMargin="18" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+<!-- 2016-07-05T10:56:56 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_patient_upcoming_visit" pageWidth="2478" pageHeight="612" orientation="Landscape" columnWidth="2478" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -90,8 +91,8 @@
        d.departmentdesc,
        sysuser.sysuserdesc
   from s_participant p
-    join u_consentparticipntmap ucpm on p.s_participantid = ucpm.participantid
-    join u_consent c on c.u_consentid = ucpm.consentid
+    left outer join u_consentparticipntmap ucpm on p.s_participantid = ucpm.participantid
+    left outer join u_consent c on c.u_consentid = ucpm.consentid
     join s_study s on s.s_studyid = p.sstudyid
     join s_participantevent pe on p.s_participantid = pe.participantid
     join department d on s.securitydepartment = d.departmentid
@@ -100,7 +101,7 @@
 where dsu.sysuserid = $P{SAPPHIRE_CurrentUser} 
    and instr( $P{STUDY_ID}  || ';', p.sstudyid || ';') > 0
    and pe.eventstatus = 'Pending'
-   and pe.eventdt between $P{SAPPHIRE_START_DATE} and  $P{SAPPHIRE_END_DATE}
+   and pe.eventdt  between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    order by p.u_mrn, pe.eventdt]]>
 	</queryString>
 	<field name="STUDYDESC" class="java.lang.String"/>
@@ -140,193 +141,118 @@ where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
 		<band splitType="Stretch"/>
 	</title>
 	<columnHeader>
-		<band height="51" splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		<band height="14" splitType="Stretch">
 			<staticText>
-				<reportElement x="4" y="21" width="50" height="30" uuid="59f62c8e-5c9c-454b-8eeb-ba22f7796f45"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[Study Desc]]></text>
+				<reportElement x="0" y="0" width="186" height="14" uuid="f6cfd6f1-abe8-48ef-b4b7-2f4817104c71">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Study Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="69" y="21" width="39" height="30" uuid="afab0347-afd9-46aa-9738-594fc2823e69"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+				<reportElement x="186" y="0" width="178" height="14" uuid="f2f994ac-59bc-43d3-8899-0d3fbb6c18d1"/>
 				<text><![CDATA[Study ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="110" y="21" width="58" height="30" uuid="ee4082af-87e3-4058-a190-93cfe310caba"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+				<reportElement x="364" y="0" width="178" height="14" uuid="115f1dd4-d503-46ed-8f2e-cb436312dd3e"/>
 				<text><![CDATA[Participant ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="176" y="21" width="53" height="30" uuid="0e2eec84-cd3d-49a5-887e-e808447de6d6"/>
-				<textElement textAlignment="Center">
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[Ext Participant ID]]></text>
+				<reportElement x="542" y="0" width="178" height="14" uuid="bb24d962-0906-4dde-9f9e-08e26d4a107e"/>
+				<text><![CDATA[External Participant ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="229" y="21" width="35" height="30" uuid="bd649456-54a4-4b9d-b633-06e1bd502bf0"/>
-				<textElement textAlignment="Center">
-					<font size="8"/>
-				</textElement>
+				<reportElement x="1076" y="0" width="178" height="14" uuid="4afdefd4-9a44-4f41-9f98-24cdb65dd465"/>
 				<text><![CDATA[MRN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="264" y="21" width="51" height="30" uuid="d0dd9d90-3cfb-46aa-bab0-9ef30f720f03"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+				<reportElement x="720" y="0" width="178" height="14" uuid="fa3d31a1-f2c1-41ca-b486-8c38c00d543a"/>
 				<text><![CDATA[First Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="315" y="21" width="44" height="30" uuid="dd0218d9-60bf-453a-a7db-c8f5f0dd1eea"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+				<reportElement x="898" y="0" width="178" height="14" uuid="e79c39bb-4888-4ab5-82b5-a14567a97f44"/>
 				<text><![CDATA[Last Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="517" y="10" width="38" height="40" uuid="bc8e5586-1fda-400d-8e52-8b6a1cbff7e5"/>
-				<textElement textAlignment="Center">
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[Consent Form Used]]></text>
+				<reportElement x="1788" y="0" width="178" height="14" uuid="b76843ae-7639-4267-8866-8056d64ee7af"/>
+				<text><![CDATA[Consent Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="600" y="20" width="69" height="30" uuid="c6a0afab-1386-41a4-a396-ddd7a3b9771f"/>
-				<textElement textAlignment="Center">
-					<font size="8"/>
-				</textElement>
+				<reportElement x="1966" y="0" width="334" height="14" uuid="a9c2970f-42d4-435c-b79b-32ca193e4d3c"/>
 				<text><![CDATA[Answers to Consent Options]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="711" y="21" width="35" height="30" uuid="20085275-82e7-4e9d-9315-4fe6ec81786a"/>
-				<textElement textAlignment="Center">
-					<font size="8"/>
-				</textElement>
+				<reportElement x="2300" y="0" width="178" height="14" uuid="4f3dab2b-205c-47fc-8494-c2d1de5058cd"/>
 				<text><![CDATA[Working Group]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="412" y="21" width="58" height="30" uuid="2b495455-2fa0-469a-9855-1115c9984fc3"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+				<reportElement x="1610" y="0" width="178" height="14" uuid="6520b73b-7aa5-42a4-aae8-74933e4b7dab"/>
 				<text><![CDATA[Visit DateTime]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="363" y="21" width="40" height="30" uuid="455bd10e-2d5a-43ad-aff7-c2be8efc56d5"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+				<reportElement x="1432" y="0" width="178" height="14" uuid="1f0e1a92-e673-48d0-85ef-5f76985d9c59"/>
 				<text><![CDATA[Visit Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="472" y="20" width="46" height="30" uuid="ec6114f7-faa2-4f06-ad89-e41ede405a9f"/>
-				<textElement textAlignment="Center">
-					<font size="8"/>
-				</textElement>
+				<reportElement x="1254" y="0" width="178" height="14" uuid="61c5e57e-cffe-4b87-b1bb-92880e5d5529"/>
 				<text><![CDATA[Place of Visit]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="51" splitType="Stretch">
+		<band height="14" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<textField>
-				<reportElement x="0" y="0" width="59" height="30" uuid="64bf2ebb-6bb2-4a02-b5a5-5b5cd41fd679"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="186" height="14" uuid="d763ce8f-1010-4f73-88ba-443535e02015">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
 				<textFieldExpression><![CDATA[$F{STUDYDESC}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="59" y="0" width="59" height="30" uuid="dc01356c-53fe-4d95-9c8a-c1ddd26c354c"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="186" y="0" width="178" height="14" uuid="79eb3029-f04e-44f4-b773-3a6c951c78ef"/>
 				<textFieldExpression><![CDATA[$F{CLINICALPROTOCOLID}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="118" y="0" width="58" height="30" uuid="12147c50-a95d-4f64-ae7e-94a51fc79309"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="364" y="0" width="178" height="14" uuid="34966237-e247-4deb-80c0-b2b927cbedb6"/>
 				<textFieldExpression><![CDATA[$F{S_PARTICIPANTID}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="176" y="0" width="58" height="30" uuid="e739a998-2edc-4d7e-b424-93a06e8dbac7"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="542" y="0" width="178" height="14" uuid="2d3c396f-d45e-4d8b-80b1-28c3441dd842"/>
 				<textFieldExpression><![CDATA[$F{EXTERNALPARTICIPANTID}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="234" y="0" width="34" height="30" uuid="0a083c82-a400-4878-950b-db8f0ab8c73d"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1076" y="0" width="178" height="14" uuid="6af043cc-998c-4dd3-8e5f-6dd770b5b364"/>
 				<textFieldExpression><![CDATA[$F{U_MRN}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="271" y="0" width="43" height="30" uuid="8c325875-4fc2-453e-bb3b-4bc7d32a08f9"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="720" y="0" width="178" height="14" uuid="bff42f95-9b16-4fc7-a7d1-25f7810bb4cd"/>
 				<textFieldExpression><![CDATA[$F{U_FIRSTNAME}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="315" y="0" width="54" height="30" uuid="d44c96bc-1471-4964-9353-73219fbc7dbb"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="898" y="0" width="178" height="14" uuid="4b1e0a24-2368-45ba-96a7-89a3004d31de"/>
 				<textFieldExpression><![CDATA[$F{U_LASTNAME}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="520" y="-1" width="43" height="40" uuid="cec2922c-0c97-4fe2-9722-4e6ebf7b33e8"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1788" y="0" width="178" height="14" uuid="60632f76-d00b-4048-a0eb-669a50d5a5ec"/>
 				<textFieldExpression><![CDATA[$F{CONSENTDESC}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="563" y="0" width="145" height="50" uuid="7bd380c6-ae0a-4e33-8200-cfc6b92762b1"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1966" y="0" width="334" height="14" uuid="4fd301ac-890e-47ce-b703-6b9af430f0d1"/>
 				<textFieldExpression><![CDATA[$F{CONSENTOPTIONDESC}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="710" y="0" width="49" height="30" uuid="0f1c650e-2ccb-4ff2-b9ec-6b17e5cb388e"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2300" y="0" width="178" height="14" uuid="ac76436e-dfa0-4319-9cd7-39e6f721cc32"/>
 				<textFieldExpression><![CDATA[$F{CONSENTEDFOR}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="415" y="0" width="58" height="30" uuid="b4764ca0-d430-46a7-9e25-a057c350f0e0"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1610" y="0" width="178" height="14" uuid="6c5da278-1d08-4eda-b071-807d6f825738"/>
 				<textFieldExpression><![CDATA[$F{EVENTDT}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="370" y="0" width="45" height="30" uuid="cbb89b70-b1c9-431f-8334-1f04f7e0e849"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1432" y="0" width="178" height="14" uuid="0c65d1ad-d1c3-4dd0-a129-ef7ccd9a5327"/>
 				<textFieldExpression><![CDATA[$F{EVENTLABEL}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="473" y="0" width="45" height="30" uuid="f1ca24f9-fbb7-48fe-a63e-304d4707f2e5"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1254" y="0" width="178" height="14" uuid="ad83b2a9-858a-414c-b010-a4b7a0aaf89d"/>
 				<textFieldExpression><![CDATA[$F{U_PLACE}]]></textFieldExpression>
 			</textField>
 		</band>

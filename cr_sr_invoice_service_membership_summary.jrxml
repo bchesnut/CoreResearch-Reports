@@ -134,7 +134,7 @@
     left outer join DATAMART_USERS dmu  on inv.pi              = dmu.dukeuid
     left outer join U_MEMBERSHIP m      on m.u_membershipid    = sds.membership
  where inv.status     in ('Ready to Bill','Billed','Dispatched')
-   and inv.invcreatedt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and inv.invcreatedt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    and ($P{SAPPHIRE_AFFILIATION} is null  or (sds.affiliation is not null and instr($P{SAPPHIRE_AFFILIATION} || ';', sds.affiliation || ';') > 0))
    and ($P{SAPPHIRE_MEMBERSHIP} is null   or (sds.membership is not null and instr($P{SAPPHIRE_MEMBERSHIP}, sds.membership || '|') > 0))
    and dsu.sysuserid = $P{SAPPHIRE_CurrentUser}

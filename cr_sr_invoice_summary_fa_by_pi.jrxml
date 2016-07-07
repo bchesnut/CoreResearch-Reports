@@ -84,7 +84,9 @@ select core,
        projectdesc,
        sum(finalamount) as finalamount
   from (
-select inv.core,
+select distinct
+       inv.u_inv_billingid,
+       inv.core,
        inv.pi,
        nvl(inv.finalamount,0)     as finalamount,
        d.departmentdesc as core_name,
@@ -92,14 +94,19 @@ select inv.core,
        p.projectdesc,
        pi.sysuserdesc as pi_name
   from U_INV_BILLING inv
+    join U_SDISERVICE sds         on sds.invoiceid = inv.u_inv_billingid
     join DEPARTMENT d             on inv.core            = d.departmentid
     join departmentsysuser dsu    on dsu.departmentid    = d.departmentid
     join U_FUNDSOURCE f           on inv.fundsource      = f.u_fundsourceid
-    join s_project p              on f.u_fundsourceid    = p.u_fundsourceid
-    left outer join SYSUSER pi    on inv.pi              = pi.sysuserid
+    join s_project p              on p.s_projectid       = sds.projectid
+    join SYSUSER pi               on inv.pi              = pi.sysuserid
+    join v_duke_restrict_pi r_pi      on r_pi.pi_sysuserid = pi.sysuserid
+    join v_duke_restrict_project r_pr on r_pr.s_projectid = p.s_projectid
  where inv.status     in ('Ready to Bill','Billed','Dispatched')
-   and inv.invcreatedt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
-   and dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and inv.invcreatedt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   and dsu.sysuserid  = $P{SAPPHIRE_CurrentUser}
+   and r_pi.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and r_pr.sysuserid = $P{SAPPHIRE_CurrentUser}
 )
  group by
        core,

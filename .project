@@ -26,4 +26,16 @@
 		<nature>net.sf.jasperreports.nature</nature>
 		<nature>com.jaspersoft.studio.babel.editor.rbeNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>cr_bb_murdock_match_by_ids.jrxml</name>
+			<type>1</type>
+			<location>//duhsnas-pri/home/bchesnut/Projects/Duke Biobank/LabVantage/Reports/CoreResearch-Reports/cr_bb_murdock_match_by_ids.jrxml</location>
+		</link>
+		<link>
+			<name>cr_bb_murdock_mismatched_types.jrxml</name>
+			<type>1</type>
+			<location>//duhsnas-pri/home/bchesnut/Projects/Duke Biobank/LabVantage/Reports/CoreResearch-Reports/cr_bb_murdock_mismatched_types.jrxml</location>
+		</link>
+	</linkedResources>
 </projectDescription>

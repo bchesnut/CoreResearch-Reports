@@ -101,7 +101,7 @@
     join sysuser on sysuser.sysuserid = dsu.sysuserid
     left outer join address a on a.addressid = cp.consenter
  where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
-   and p.enrolldt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and p.enrolldt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    and instr($P{STUDY_ID} || ';', p.sstudyid || ';') > 0
  order by s.studydesc,
           p.externalparticipantid]]>

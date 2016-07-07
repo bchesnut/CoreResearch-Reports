@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-05-17T10:28:55 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_murdock_mismatched_types" pageWidth="1224" pageHeight="28" orientation="Landscape" columnWidth="1224" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="lvqa1"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="inch"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="STUDY_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COLLECTION_START_DATE" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COLLECTION_END_DATE" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select sf.s_samplefamilyid,
+       sf.sstudyid,
+       sf.u_place,
+       pe.eventlabel,
+       sf.collectiondt,
+       p.u_externalindividualid,
+       p.externalparticipantid,
+       s.sampletypeid,
+       s.storagestatus,
+       (select listagg(t.detailkeyid1,',') within group (order by t.detailkeyid1)
+         from s_sampledetail t
+        where t.s_sampleid = s.s_sampleid) additive_type,
+       ti.containertypeid,
+       s.u_sponsorid
+  from s_samplefamily sf
+    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
+    join s_participant p on p.s_participantid = sf.participantid
+    join s_study st on st.s_studyid = sf.sstudyid
+    join s_participantevent pe on pe.participantid = sf.participantid
+      and pe.s_participanteventid = sf.participanteventid
+    join department d on d.departmentid = st.securitydepartment
+    join departmentsysuser dsu on dsu.departmentid = d.departmentid
+    left outer join trackitem ti on s.s_sampleid = ti.linkkeyid1 and ti.linksdcid = 'Sample'
+ where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and s.storagestatus in ('Received', 'In Circulation')
+   and sf.collectiondt >= $P{COLLECTION_START_DATE} 
+   and sf.collectiondt <= trunc($P{COLLECTION_END_DATE}) + 1 - 1/24/60/60
+   and ($P{STUDY_ID} is null  or instr($P{STUDY_ID} || ';', sf.sstudyid || ';') > 0)
+ order by s.sampletypeid,
+       (select listagg(t.detailkeyid1,',') within group (order by t.detailkeyid1)
+         from s_sampledetail t
+        where t.s_sampleid = s.s_sampleid),
+       ti.containertypeid,
+       s.u_sponsorid]]>
+	</queryString>
+	<field name="S_SAMPLEFAMILYID" class="java.lang.String"/>
+	<field name="SSTUDYID" class="java.lang.String"/>
+	<field name="U_PLACE" class="java.lang.String"/>
+	<field name="EVENTLABEL" class="java.lang.String"/>
+	<field name="COLLECTIONDT" class="java.sql.Timestamp"/>
+	<field name="U_EXTERNALINDIVIDUALID" class="java.lang.String"/>
+	<field name="EXTERNALPARTICIPANTID" class="java.lang.String"/>
+	<field name="SAMPLETYPEID" class="java.lang.String"/>
+	<field name="STORAGESTATUS" class="java.lang.String"/>
+	<field name="ADDITIVE_TYPE" class="java.lang.String"/>
+	<field name="CONTAINERTYPEID" class="java.lang.String"/>
+	<field name="U_SPONSORID" class="java.lang.String"/>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<printWhenExpression><![CDATA[new Boolean($V{PAGE_NUMBER}.intValue() == 1)]]></printWhenExpression>
+			<staticText>
+				<reportElement x="200" y="0" width="100" height="14" uuid="55f36a6c-2474-428b-ab1b-0cca2d997ddd"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[Study]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="200" height="14" uuid="a64dbc46-670e-4db2-837e-9ef9f8a6882c">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[Site]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="0" width="100" height="14" uuid="3a973f7d-a617-41c2-8c2d-9dac9f9b3246"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[Visit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="0" width="100" height="14" uuid="a41ceced-0ae3-44b3-8f85-0ff97d22e2c6"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[Date/Time]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="0" width="100" height="14" uuid="f9b9e547-bfb4-4f9b-9eb5-944a2262ddfd"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[Participant]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="600" y="0" width="100" height="14" uuid="6978f080-87f0-40ec-b451-f55aca5401a4"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[Kit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="700" y="0" width="100" height="14" uuid="88d3d06b-67f3-4033-b890-60a067d97b1f">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[Sample]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="0" width="200" height="14" uuid="378d1d49-5fea-40c8-9f97-ce3f18b9f828">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[Additive Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1100" y="0" width="100" height="14" uuid="7723199f-2817-409d-b827-a19e92ff7ebe">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[Container Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="800" y="0" width="100" height="14" uuid="33c98802-9c9f-4a31-9db5-be592b291136">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[Specimen Typea]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="200" height="14" uuid="d22de24e-c6b0-4036-8c5f-b464deebfaf8">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{U_PLACE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="100" height="14" uuid="ff66770a-181b-41b8-a315-530f29e9d968"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{SSTUDYID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="400" y="0" width="100" height="14" uuid="4bdd9829-eb45-4615-9489-354741363f34"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{COLLECTIONDT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="500" y="0" width="100" height="14" uuid="f2637022-d864-4578-8c94-a3ce104d79a6"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{U_EXTERNALINDIVIDUALID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="600" y="0" width="100" height="14" uuid="435dc9f1-2371-4e90-b34a-b8bed7b2ab90"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{EXTERNALPARTICIPANTID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="700" y="0" width="100" height="14" uuid="9e016108-e1ef-4664-832b-e336a15e2ce0"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{U_SPONSORID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="800" y="0" width="100" height="14" uuid="d02f0d5c-d2b6-4a15-bfa8-162b3870672d"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{SAMPLETYPEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="900" y="0" width="200" height="14" uuid="f70860be-e7ec-4b55-9d0d-e54a1fa28730">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{ADDITIVE_TYPE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1100" y="0" width="100" height="14" uuid="8e0f5d99-f2ec-4df3-9f57-410ec8af439a">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{CONTAINERTYPEID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="100" height="14" uuid="5c248384-e992-4411-b7f8-7ce8b22933aa"/>
+				<textFieldExpression><![CDATA[$F{EVENTLABEL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

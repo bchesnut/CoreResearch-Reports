@@ -132,7 +132,7 @@ select sf.s_samplefamilyid,
  where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
    and s.storagestatus in ('Received', 'In Circulation')
    and sf.collectiondt >= $P{COLLECTION_START_DATE} 
-   and sf.collectiondt <= $P{COLLECTION_END_DATE} 
+   and sf.collectiondt <= trunc($P{COLLECTION_END_DATE}) + 1 - 1/24/60/60
    and ($P{STUDY_ID} is null or instr($P{STUDY_ID} || ';', sf.sstudyid || ';') > 0)
    and ($P{EVENT_NAME} is null or instr($P{EVENT_NAME} || ';', pe.eventlabel || ';') > 0)
 )

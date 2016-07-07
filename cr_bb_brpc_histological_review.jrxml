@@ -104,7 +104,7 @@
     left outer join v_duke_tissuetree body_site on body_site.s_tissueid = s.u_bodysiteoforigin
     left outer join s_restrictclass rc on rc.s_restrictclassid = sf.restrictclassid
  where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
-   and sf.collectiondt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and sf.collectiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    and instr($P{QUERY_SAMPLE_TYPE} || ';', s.sampletypeid || ';') > 0
  order by
        p.externalparticipantid,

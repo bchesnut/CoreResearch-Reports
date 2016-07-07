@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-01-22T20:13:19 -->
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-07-07T09:26:23 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_sr_instrument_reservation_details" pageWidth="2170" pageHeight="612" orientation="Landscape" columnWidth="2170" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -127,7 +127,7 @@
    and r_pi.sysuserid = $P{SAPPHIRE_CurrentUser}
    and r_pr.sysuserid = $P{SAPPHIRE_CurrentUser}
    and ($P{SAPPHIRE_START_DATE} is null or rsv.actualstartdate >= $P{SAPPHIRE_START_DATE}) 
-   and ($P{SAPPHIRE_END_DATE} is null or rsv.actualstartdate <= $P{SAPPHIRE_END_DATE})
+   and ($P{SAPPHIRE_END_DATE} is null or rsv.actualstartdate <= trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60)
    and ($P{QUERY_PI} is null or (rsv.pi is not null and instr($P{QUERY_PI}, rsv.pi || '|') > 0))
    and rsv.actualusagetime > 0
  order by rsv.departmentid,
@@ -183,7 +183,7 @@
 		<band height="14" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
-				<reportElement x="1" y="0" width="180" height="14" uuid="fc501524-a67e-4e56-a60e-f65ee0b5ef82">
+				<reportElement x="0" y="0" width="181" height="14" uuid="fc501524-a67e-4e56-a60e-f65ee0b5ef82">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -279,7 +279,7 @@
 				<text><![CDATA[RESERVED_FOR]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1382" y="0" width="280" height="14" uuid="0b9ae5fe-7b46-4ae1-baa9-f82b532c0a6a">
+				<reportElement x="1381" y="0" width="281" height="14" uuid="0b9ae5fe-7b46-4ae1-baa9-f82b532c0a6a">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<text><![CDATA[EMAIL]]></text>
@@ -290,8 +290,9 @@
 		<band height="14" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField isBlankWhenNull="true">
-				<reportElement x="1" y="0" width="180" height="14" uuid="de717ea4-30ff-4cfb-aab2-6a65e8cd41f9">
+				<reportElement x="0" y="0" width="181" height="14" uuid="de717ea4-30ff-4cfb-aab2-6a65e8cd41f9">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement>
 					<font size="10"/>
@@ -374,7 +375,9 @@
 				<textFieldExpression><![CDATA[$F{RESERVED_FOR}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="1382" y="0" width="280" height="14" uuid="ff9e373e-045b-4210-ada2-0e6bc25b54aa"/>
+				<reportElement x="1381" y="0" width="281" height="14" uuid="ff9e373e-045b-4210-ada2-0e6bc25b54aa">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<textFieldExpression><![CDATA[$F{EMAIL}]]></textFieldExpression>
 			</textField>
 		</band>

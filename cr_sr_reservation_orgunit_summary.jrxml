@@ -85,7 +85,7 @@ select rsv.departmentid,
     left outer join SYSUSER rf on rsv.reservedfor = rf.sysuserid
     left outer join DATAMART_USERS dmu on rsv.reservedfor = dmu.dukeuid
  where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
-   and rsv.actualstartdate between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and rsv.actualstartdate between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    and rsv.actualusagetime > 0
  group by rsv.departmentid,
           rsv.reservedfor,

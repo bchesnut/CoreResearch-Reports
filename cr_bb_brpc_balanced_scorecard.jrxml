@@ -91,13 +91,13 @@ select 'Total # Consent Responses' as rtext,
               from s_participant p
                 join u_consentparticipntmap cp on p.s_participantid = cp.participantid
              where p.sstudyid = $P{STUDY_ID}
-               and cp.consenteddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+               and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
                and cp.consentflag = 'Yes') as consent_yes,
            (select count(*)
              from s_participant p
                join u_consentparticipntmap cp on p.s_participantid = cp.participantid
             where p.sstudyid = $P{STUDY_ID}
-              and cp.consenteddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+              and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
               and cp.consentflag = 'No') as consent_no
       from dual
     )
@@ -113,13 +113,13 @@ select 'Consent Success Rate' as rtext,
               from s_participant p
                 join u_consentparticipntmap cp on p.s_participantid = cp.participantid
              where p.sstudyid =$P{STUDY_ID}
-               and cp.consenteddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+               and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
                and cp.consentflag = 'Yes') as consent_yes,
            (select count(*)
              from s_participant p
                join u_consentparticipntmap cp on p.s_participantid = cp.participantid
             where p.sstudyid = $P{STUDY_ID}
-              and cp.consenteddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+              and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
               and cp.consentflag in ('Yes', 'No')) as consent_total
       from dual
     )
@@ -131,8 +131,8 @@ select '# Whole Blood Samples Collected' as rtext,
     join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
     join s_participant p on p.s_participantid = sf.participantid
  where p.sstudyid = $P{STUDY_ID}
-   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
-   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    )
    and s.sampletypeid in ('Whole Blood', 'WHOLE BLOOD')
 union all
@@ -144,8 +144,8 @@ select '# Tissue Samples Collected' as rtext,
     join s_participant p on p.s_participantid = sf.participantid
     join s_sampletype st on st.s_sampletypeid = s.sampletypeid
  where p.sstudyid = $P{STUDY_ID}
-   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
-   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    )
    and st.u_tissueflag = 'Y'
 union all
@@ -156,8 +156,8 @@ select 'Total Samples Collected' as rtext,
     join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
     join s_participant p on p.s_participantid = sf.participantid
  where p.sstudyid = $P{STUDY_ID}
-   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
-   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    )
 union all
 select 'Total Tissue Samples Collected' as rtext,
@@ -171,8 +171,8 @@ select 'Total Tissue Samples Collected' as rtext,
         join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
         join s_sampletype st on st.s_sampletypeid = s.sampletypeid
      where sf.participantid = p.s_participantid
-	   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
-	   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+	   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+	   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
 	   )
        and st.u_tissueflag = 'Y'
     )
@@ -186,7 +186,7 @@ select '# Participants with Collection Failures' as rtext,
        from s_participantevent pe
          join u_collectionfailure cf on cf.s_participanteventid = pe.s_participanteventid
       where pe.participantid = p.s_participantid
-        and cf.createdt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+        and cf.createdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
      )
 union all
 select 'Total # Collection Failures' as rtext,
@@ -195,7 +195,7 @@ select 'Total # Collection Failures' as rtext,
   from s_participant p
     join s_participantevent pe on pe.participantid = p.s_participantid
     join u_collectionfailure cf on cf.s_participanteventid = pe.s_participanteventid
- where cf.createdt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+ where cf.createdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
 union all
 select '# RNA Samples' as rtext,
        90 as rsort,
@@ -204,8 +204,8 @@ select '# RNA Samples' as rtext,
     join s_samplefamily sf on sf.participantid = p.s_participantid
     join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
  where p.sstudyid = $P{STUDY_ID}
-   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
-   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    )
    and s.sampletypeid in  ('Total RNA', 'TOTAL RNA')
    and s.confirmeddt is not null
@@ -221,8 +221,8 @@ select '# RNA Samples passing QC' as rtext,
 	    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
 	    join sdidataitemspec sds on sds.sdcid = 'Sample' and sds.keyid1 = s.s_sampleid
 	 where p.sstudyid = $P{STUDY_ID}
-	   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
-	   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+	   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+	   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
 	   )
 	   and s.sampletypeid in  ('Total RNA', 'TOTAL RNA')
 	   and s.confirmeddt is not null
@@ -239,8 +239,8 @@ select '# DNA Samples' as rtext,
     join s_samplefamily sf on sf.participantid = p.s_participantid
     join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
  where p.sstudyid = $P{STUDY_ID}
-   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
-   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    )
    and s.sampletypeid = 'DNA'
    and s.confirmeddt is not null
@@ -256,8 +256,8 @@ select '# DNA Samples passing QC' as rtext,
 	    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
 	    join sdidataitemspec sds on sds.sdcid = 'Sample' and sds.keyid1 = s.s_sampleid
 	 where p.sstudyid = $P{STUDY_ID}
-	   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
-	   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+	   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+	   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
 	   )
 	   and s.sampletypeid in  ('DNA')
 	   and s.confirmeddt is not null
@@ -278,7 +278,7 @@ select *
     join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
     join s_sampletype st on st.s_sampletypeid = s.sampletypeid
  where sf.participantid = p.s_participantid
-   and sf.collectiondt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+   and sf.collectiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    and s.sampletypeid in ('Whole Blood', 'WHOLE BLOOD')
 )
 union all
@@ -295,7 +295,7 @@ select 'Total Packages Shipped' as rtext,
      where a.sdcid = 'LV_Package' 
        and a.keyid1 = pk.s_packageid
        and a.contactfunction = 'ShippedBy'
-       and a.functiondt between $P{SAPPHIRE_START_DATE} and $P{SAPPHIRE_END_DATE}
+       and a.functiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
     )
 )
  where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}

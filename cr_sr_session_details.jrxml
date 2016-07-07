@@ -112,7 +112,7 @@
  where inv.status is not null
    and dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
    and ($P{ACTUAL_START_DATE} is null  or res.actualstartdate >= $P{ACTUAL_START_DATE})
-   and ($P{ACTUAL_END_DATE} is null    or res.actualenddate <= $P{ACTUAL_END_DATE})
+   and ($P{ACTUAL_END_DATE} is null    or res.actualenddate <= trunc($P{ACTUAL_END_DATE}) + 1 - 1/24/60/60)
    and ($P{QUERY_CORE} is null        or (sdi.core is not null and instr($P{QUERY_CORE}, sdi.core || '|') > 0))
    and ($P{QUERY_INSTRUMENT} is null   or (res.reskeyid1 is not null and instr($P{QUERY_INSTRUMENT}, res.reskeyid1 || '|') > 0))
    and ($P{QUERY_SERVICETASK} is null  or (sdi.serviceid is not null and instr($P{QUERY_SERVICETASK}, sdi.serviceid || '|') > 0))
