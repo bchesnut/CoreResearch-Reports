@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2015-12-10T10:01:51 -->
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-07-07T10:39:33 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_sr_invoice_summary_by_pi" pageWidth="612" pageHeight="792" columnWidth="576" leftMargin="18" rightMargin="18" topMargin="18" bottomMargin="18" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="lvdev1"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="lvqa1"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -68,7 +68,8 @@
 	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date"/>
 	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
 	<queryString>
-		<![CDATA[select inv.u_inv_billingid,
+		<![CDATA[select distinct
+       inv.u_inv_billingid,
        inv.invcreatedt,
        inv.fiscalperiod,
        inv.status,
@@ -89,9 +90,10 @@
        f.fundnumber,
        pi.sysuserdesc as pi_name
   from U_INV_BILLING inv
+    join U_SDISERVICE sds on inv.u_inv_billingid = sds.invoiceid
+    join s_project p on p.s_projectid = sds.projectid
     join DEPARTMENT d on inv.core = d.departmentid
     join DEPARTMENTSYSUSER dsu on dsu.departmentid = d.departmentid
-    join s_project p on p.s_projectid = inv.projectid
     join U_FUNDSOURCE f on inv.fundsource = f.u_fundsourceid
     join SYSUSER pi on inv.pi = pi.sysuserid
     join v_duke_restrict_pi r_pi on r_pi.pi_sysuserid = pi.sysuserid
@@ -136,6 +138,9 @@
 		<variableExpression><![CDATA[$F{SUBSIDY}]]></variableExpression>
 	</variable>
 	<variable name="FINALAMOUNT_1" class="java.math.BigDecimal" resetType="Group" resetGroup="FUNDNUMBER" calculation="Sum">
+		<variableExpression><![CDATA[$F{FINALAMOUNT}]]></variableExpression>
+	</variable>
+	<variable name="FINALAMOUNT_2" class="java.math.BigDecimal" resetType="Group" resetGroup="CORE" calculation="Sum">
 		<variableExpression><![CDATA[$F{FINALAMOUNT}]]></variableExpression>
 	</variable>
 	<group name="CORE">
@@ -197,7 +202,19 @@
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="10" splitType="Stretch"/>
+			<band height="37" splitType="Stretch">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<textField>
+					<reportElement x="485" y="8" width="70" height="13" uuid="b0a021ba-ce56-4142-abcd-4e37edf9e85e"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[java.text.NumberFormat.getCurrencyInstance().format($V{FINALAMOUNT_2})]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="4" width="576" height="1" uuid="d1a4904f-9d47-4b67-b772-a32783841dcd"/>
+				</line>
+			</band>
 		</groupFooter>
 	</group>
 	<group name="FUNDNUMBER">
@@ -249,7 +266,9 @@
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band splitType="Stretch"/>
+			<band splitType="Stretch">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			</band>
 		</groupFooter>
 	</group>
 	<background>
