@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
-<!-- 2016-07-28T11:50:30 -->
+<!-- 2016-07-28T14:42:54 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_storage_reconciliation_with_sample_data" pageWidth="1800" pageHeight="612" orientation="Landscape" columnWidth="1800" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -106,7 +106,7 @@
     join departmentsysuser dsu on dsu.departmentid = d.departmentid
     join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid
  where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
-   and su.securitydepartment = $P{QUERY_CORE}
+  and ($P{QUERY_CORE} is null or (su.securitydepartment is not null and instr($P{QUERY_CORE}, su.securitydepartment || '|') > 0))
 union all
 select null as externalparticipantid,
       null as sstudyid,
@@ -142,7 +142,7 @@ select null as externalparticipantid,
     join departmentsysuser dsu on dsu.departmentid = d.departmentid
     join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid
  where dsu.sysuserid =$P{SAPPHIRE_CurrentUser}
-   and su.securitydepartment = $P{QUERY_CORE}
+      and ($P{QUERY_CORE} is null or (su.securitydepartment is not null and instr($P{QUERY_CORE}, su.securitydepartment || '|') > 0))
 union all
 select null as externalparticipantid,
 null as sstudyid,
@@ -182,7 +182,8 @@ null as sstudyid,
       where ti.currentstorageunitid = su.storageunitid
    )
    and dsu.sysuserid =$P{SAPPHIRE_CurrentUser}
-   and su.securitydepartment = $P{QUERY_CORE}
+   and ($P{QUERY_CORE} is null or (su.securitydepartment is not null and instr($P{QUERY_CORE}, su.securitydepartment || '|') > 0))
+   
 union all
 select p.externalparticipantid,
         p.sstudyid,
@@ -220,8 +221,7 @@ select p.externalparticipantid,
     join departmentsysuser dsu on dsu.departmentid = d.departmentid
     join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid
  where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
-   and su.securitydepartment = $P{QUERY_CORE}
- 
+   and ($P{QUERY_CORE} is null 	or (su.securitydepartment is not null and instr($P{QUERY_CORE}, su.securitydepartment || '|') > 0))
  
  order by 2,3]]>
 	</queryString>
