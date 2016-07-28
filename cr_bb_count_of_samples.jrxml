@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
-<!-- 2016-07-08T14:45:12 -->
+<!-- 2016-07-12T15:01:27 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_brpc_samples_by_count" pageWidth="612" pageHeight="792" columnWidth="576" leftMargin="18" rightMargin="18" topMargin="18" bottomMargin="18" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -8,6 +8,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LVQA1"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -68,66 +69,46 @@
 	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
 	<parameter name="STUDY_ID" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select 
-      sysuser.sysuserdesc,
-        study.s_studyid,
+		<![CDATA[select
+       s.SSTUDYID,
        study.studydesc,
-        d.departmentdesc,
-         s.sampletypeid,
-         count(*)
-  from s_sample s
-   join  S_SAMPLEFAMILY sf on s.samplefamilyid = sf.s_samplefamilyid
-   LEFT OUTER JOIN S_SAMPLEMAP ON s.s_SAMPLEID = S_SAMPLEMAP.SOURCESAMPLEID
-   LEFT OUTER JOIN S_PREPTYPE  ON s.PREPTYPEID = S_PREPTYPE.S_PREPTYPEID
-   JOIN S_STUDY	STUDY ON s.SSTUDYID = STUDY.S_STUDYID
-   left outer join s_participant p on p.s_participantid = sf.participantid
-   left outer JOIN S_EVENTLOG  ON s.S_SAMPLEID = S_EVENTLOG.EVENTKEYID1 and S_EVENTLOG.EVENTSDCID='Sample'
-   LEFT OUTER JOIN TRACELOG ON S_EVENTLOG.TRACELOGID = TRACELOG.TRACELOGID
-   LEFT OUTER JOIN S_COLLECTMETHOD ON sf.COLLECTMETHODID = S_COLLECTMETHOD.S_COLLECTMETHODID
-   LEFT OUTER JOIN S_RESTRICTCLASS ON sf.RESTRICTCLASSID = S_RESTRICTCLASS.S_RESTRICTCLASSID
-   LEFT OUTER JOIN S_SUBJECT ON sf.subjectid = S_SUBJECT.s_subjectid
-   LEFT OUTER JOIN S_STRAIN ON S_SUBJECT.STRAINID = S_STRAIN.S_STRAINID
-   LEFT OUTER JOIN S_SPECIES ON S_SUBJECT.SPECIESID = S_SPECIES.S_SPECIESID
-     
-   join trackitem on trackitem.linkkeyid1=s.s_sampleid 
-   and trackitem.linksdcid='Sample'
+       d.departmentdesc,
+       sysuser.sysuserdesc,
+       s.sampletypeid, 
+       count(*)
+from s_sample s
+  join s_samplefamily sf on s.samplefamilyid = sf.s_samplefamilyid
+  join s_study study on study.s_studyid=s.SSTUDYID
   join department d on d.departmentid = study.securitydepartment
   join departmentsysuser dsu on dsu.departmentid = d.departmentid
   join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid
 
-     where s.receiveddt  between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-     
-       and ($P{STUDY_ID} is null or ($P{STUDY_ID} is not null and instr($P{STUDY_ID} || ';', study.s_studyid || ';') > 0))
-   and  dsu.sysuserid=$P{SAPPHIRE_CurrentUser} 
-   and  s.sampletypeid is not null
+ Where dsu.sysuserid= $P{SAPPHIRE_CurrentUser} 
+
+  and s.createdt  between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
   
-      
-group by 
+   and ($P{STUDY_ID} is null or ($P{STUDY_ID} is not null and s.sstudyid = $P{STUDY_ID} ))
+
+ group by s.sstudyid,
+       study.studydesc,
+       d.departmentdesc,
        sysuser.sysuserdesc,
-       study.s_studyid,
-       study.studydesc,
-       d.departmentdesc,
        s.sampletypeid
-        
- order by sysuser.sysuserdesc,
-       study.s_studyid,
-       study.studydesc,
-       d.departmentdesc,
-       s.sampletypeid]]>
+ order by s.sstudyid, s.sampletypeid]]>
 	</queryString>
-	<field name="SYSUSERDESC" class="java.lang.String"/>
-	<field name="S_STUDYID" class="java.lang.String"/>
+	<field name="SSTUDYID" class="java.lang.String"/>
 	<field name="STUDYDESC" class="java.lang.String"/>
 	<field name="DEPARTMENTDESC" class="java.lang.String"/>
+	<field name="SYSUSERDESC" class="java.lang.String"/>
 	<field name="SAMPLETYPEID" class="java.lang.String"/>
 	<field name="COUNT(*)" class="java.math.BigDecimal"/>
 	<variable name="COUNT(*)1" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupByStudyID" calculation="Sum">
 		<variableExpression><![CDATA[$F{COUNT(*)}]]></variableExpression>
 	</variable>
 	<group name="GroupByStudyID">
-		<groupExpression><![CDATA[$F{S_STUDYID}]]></groupExpression>
+		<groupExpression><![CDATA[$F{SSTUDYID}]]></groupExpression>
 		<groupHeader>
-			<band height="37">
+			<band height="36">
 				<staticText>
 					<reportElement x="0" y="20" width="100" height="14" uuid="a2355abf-19a3-4902-a4d6-0d05f098cdd0">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -160,7 +141,7 @@ group by
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				<textField>
-					<reportElement x="210" y="0" width="172" height="14" uuid="31a0ec3c-5f27-4f5f-9bed-f817c9059469">
+					<reportElement x="210" y="0" width="180" height="14" uuid="31a0ec3c-5f27-4f5f-9bed-f817c9059469">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
 					<textFieldExpression><![CDATA["Total Count of Samples: " + $V{COUNT(*)1}]]></textFieldExpression>

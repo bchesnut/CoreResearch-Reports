@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-06-15T10:42:54 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_brpc_histological_review" pageWidth="2412" pageHeight="612" orientation="Landscape" columnWidth="2412" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+<!-- 2016-07-25T14:16:21 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_brpc_histological_review" pageWidth="2552" pageHeight="612" orientation="Landscape" columnWidth="2552" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
@@ -84,10 +84,10 @@
        sf.u_tissuecount,
        s.u_processingdelay,
        sf.u_dimension,
-       s.u_histologicdiag,
+       cd.clinicaldiagdesc,
        s.u_percenttumornuclei,
        s.u_percentnecrosis,
-       s.collectiondt,
+       nvl(s.collectiondt, sf.collectiondt) as collectiondt,
        d.departmentdesc,
        sysuser.sysuserdesc
   from s_samplefamily sf
@@ -103,6 +103,7 @@
     left outer join v_duke_tissuetree anat_site on anat_site.s_tissueid = sf.tissueid
     left outer join v_duke_tissuetree body_site on body_site.s_tissueid = s.u_bodysiteoforigin
     left outer join s_restrictclass rc on rc.s_restrictclassid = sf.restrictclassid
+    left outer join s_clinicaldiag cd on cd.s_clinicaldiagid = s.u_histologicdiag
  where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
    and sf.collectiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
    and instr($P{QUERY_SAMPLE_TYPE} || ';', s.sampletypeid || ';') > 0
@@ -122,7 +123,7 @@
 	<field name="U_TISSUECOUNT" class="java.math.BigDecimal"/>
 	<field name="U_PROCESSINGDELAY" class="java.math.BigDecimal"/>
 	<field name="U_DIMENSION" class="java.lang.String"/>
-	<field name="U_HISTOLOGICDIAG" class="java.lang.String"/>
+	<field name="CLINICALDIAGDESC" class="java.lang.String"/>
 	<field name="U_PERCENTTUMORNUCLEI" class="java.math.BigDecimal"/>
 	<field name="U_PERCENTNECROSIS" class="java.math.BigDecimal"/>
 	<field name="COLLECTIONDT" class="java.sql.Timestamp"/>
@@ -239,10 +240,9 @@
 Participant ID]]></text>
 			</staticText>
 			<line>
-				<reportElement x="0" y="36" width="2376" height="1" uuid="9660c0b3-db7d-4413-ac30-00322eef3361">
+				<reportElement x="0" y="36" width="2540" height="1" uuid="9660c0b3-db7d-4413-ac30-00322eef3361">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 			</line>
 			<staticText>
@@ -305,24 +305,23 @@ Time (min)]]></text>
 Dimensions]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2080" y="7" width="100" height="28" uuid="35b1fd35-c338-4a7f-807f-fc004059be45"/>
+				<reportElement x="2080" y="7" width="260" height="28" uuid="35b1fd35-c338-4a7f-807f-fc004059be45"/>
 				<text><![CDATA[Histologic
 Diagnosis]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2180" y="7" width="100" height="28" uuid="f718a31f-34e7-481f-b5ba-2111d55c0e2b"/>
+				<reportElement x="2340" y="7" width="100" height="28" uuid="f718a31f-34e7-481f-b5ba-2111d55c0e2b"/>
 				<text><![CDATA[% Tumor
 Nuclei]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2280" y="21" width="100" height="14" uuid="4b931eaa-91ec-4872-8e87-59eca7862803"/>
+				<reportElement x="2440" y="21" width="100" height="14" uuid="4b931eaa-91ec-4872-8e87-59eca7862803"/>
 				<text><![CDATA[% Necrosis]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="14" splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="80" height="14" uuid="98a8a249-ad52-443d-af91-95a9b9e64b68">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -383,16 +382,16 @@ Nuclei]]></text>
 				<textFieldExpression><![CDATA[$F{U_DIMENSION}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="2080" y="0" width="100" height="14" uuid="1de6dbc3-d9d9-47c7-b989-e8b3484dbf65"/>
-				<textFieldExpression><![CDATA[$F{U_HISTOLOGICDIAG}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="2180" y="0" width="100" height="14" uuid="ea344026-25b8-455b-849b-7421856c7e4e"/>
+				<reportElement x="2340" y="0" width="100" height="14" uuid="ea344026-25b8-455b-849b-7421856c7e4e"/>
 				<textFieldExpression><![CDATA[$F{U_PERCENTTUMORNUCLEI}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="2280" y="0" width="100" height="14" uuid="b22866fa-e04d-4aa4-b4f7-fa2a0c700400"/>
+				<reportElement x="2440" y="0" width="100" height="14" uuid="b22866fa-e04d-4aa4-b4f7-fa2a0c700400"/>
 				<textFieldExpression><![CDATA[$F{U_PERCENTNECROSIS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2080" y="0" width="260" height="14" uuid="5473049e-2fb2-4e1c-a32b-e500350d9be9"/>
+				<textFieldExpression><![CDATA[$F{CLINICALDIAGDESC}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

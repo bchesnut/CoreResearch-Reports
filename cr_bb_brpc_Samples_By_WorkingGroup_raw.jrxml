@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
-<!-- 2016-07-08T13:24:16 -->
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-07-11T12:51:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_brpc_Samples_By_WorkingGroup" pageWidth="2412" pageHeight="612" orientation="Landscape" columnWidth="2412" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" whenResourceMissingType="Empty" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -9,7 +9,6 @@
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LVQA1"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
@@ -18,6 +17,7 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -138,8 +138,7 @@ AND sf.COLLECTIONDT between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DA
 and ($P{STUDY_ID} is null or ( $P{STUDY_ID} is not null and instr($P{STUDY_ID} || ';',st.s_studyid || ';') > 0))
  order by
        p.externalparticipantid,
-      sf.collectiondt
-]]>
+      sf.collectiondt]]>
 	</queryString>
 	<field name="EXTERNALPARTICIPANTID" class="java.lang.String"/>
 	<field name="MRN" class="java.lang.String"/>
@@ -185,10 +184,6 @@ and ($P{STUDY_ID} is null or ( $P{STUDY_ID} is not null and instr($P{STUDY_ID} |
 			<staticText>
 				<reportElement x="228" y="0" width="104" height="30" uuid="091e4f7a-0cb5-42ab-83a2-5fce78e2c30e"/>
 				<text><![CDATA[PARTICIPANTALIAS]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="332" y="0" width="104" height="30" uuid="d6f83ce0-12d8-49ca-ba44-5b832252f0a1"/>
-				<text><![CDATA[PROTOCOL]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="436" y="0" width="104" height="30" uuid="ee415c38-4e73-4f48-9399-1c0233c0d8e6"/>
@@ -266,102 +261,106 @@ and ($P{STUDY_ID} is null or ( $P{STUDY_ID} is not null and instr($P{STUDY_ID} |
 				<reportElement x="2308" y="0" width="104" height="30" uuid="adb4c836-3f8d-4841-8f34-a5195ca12362"/>
 				<text><![CDATA[DESTINATION]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="332" y="0" width="104" height="30" uuid="0ae86b98-49ef-45f1-b5be-8677d0dbe91d"/>
+				<text><![CDATA[PROTOCOL]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="30">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="124" height="30" uuid="3d6fd4ba-7343-4994-99f9-40108c21e0ff"/>
 				<textFieldExpression><![CDATA[$F{EXTERNALPARTICIPANTID}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="124" y="0" width="104" height="30" uuid="bf049efa-b6bf-4bc6-b1b3-eee58001778e"/>
 				<textFieldExpression><![CDATA[$F{MRN}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="228" y="0" width="104" height="30" uuid="331119b9-2941-4dc1-b026-818c048e9b65"/>
 				<textFieldExpression><![CDATA[$F{PARTICIPANTALIAS}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="332" y="0" width="104" height="30" uuid="73870080-0a42-4234-915b-6d580c6689a3"/>
-				<textFieldExpression><![CDATA[$F{PROTOCOL}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="430" y="0" width="104" height="30" uuid="a317c465-11b3-4976-80eb-cf554f5a078f"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="436" y="0" width="104" height="30" uuid="a317c465-11b3-4976-80eb-cf554f5a078f"/>
 				<textFieldExpression><![CDATA[$F{WORKINGGROUP}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="540" y="0" width="104" height="30" uuid="4548db1c-06b6-43c2-a65a-e04a6758f8bd"/>
 				<textFieldExpression><![CDATA[$F{COLLECTIONMETHOD}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="644" y="0" width="104" height="30" uuid="6b069233-5405-44d2-abf4-3034fb82ffd0"/>
 				<textFieldExpression><![CDATA[$F{SPONSORSAMPLEID}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="748" y="0" width="104" height="30" uuid="ed3de97b-8126-4d20-abc9-851241afcce6"/>
 				<textFieldExpression><![CDATA[$F{SAMPLEID}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="852" y="0" width="104" height="30" uuid="57abf518-9d9e-4047-8258-23ca2798cabc"/>
 				<textFieldExpression><![CDATA[$F{PARENT}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="956" y="0" width="104" height="30" uuid="221b739e-a92e-4185-a955-4e8b24f4d123"/>
 				<textFieldExpression><![CDATA[$F{ANATOMIC_SITE_OF_FINDING}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="1060" y="0" width="104" height="30" uuid="3b0001a6-1e18-41d2-8524-c0ee46e32b00"/>
 				<textFieldExpression><![CDATA[$F{BODY_SITE_OF_ORIGIN}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="1164" y="0" width="104" height="30" uuid="dc5b9d58-4853-4d19-82a3-919f91029990"/>
 				<textFieldExpression><![CDATA[$F{SAMPLETYPE}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="1268" y="0" width="104" height="30" uuid="50c19a19-c5c4-457b-8cd2-8fd3eef495b4"/>
 				<textFieldExpression><![CDATA[$F{COLLECTIONDATETIME}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="1372" y="0" width="104" height="30" uuid="16ef7c5d-960e-479f-b377-a40791c67b56"/>
 				<textFieldExpression><![CDATA[$F{COLDISCHEMIATIME}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="1476" y="0" width="104" height="30" uuid="0c6739b6-1618-4ffa-b797-d8b0f4b90193"/>
 				<textFieldExpression><![CDATA[$F{TIMETOPROCESS}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="1580" y="0" width="104" height="30" uuid="ed7dddc2-3539-437d-bff2-21cfcabf3465"/>
 				<textFieldExpression><![CDATA[$F{GROSSAPPEARANCE}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="1684" y="0" width="104" height="30" uuid="f1f5cd38-7c81-4b59-8fc9-9fe1b856bb16"/>
 				<textFieldExpression><![CDATA[$F{HISTOLOGICDX}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="1788" y="0" width="104" height="30" uuid="4d184083-c3db-4c5d-802e-710937e61b55"/>
 				<textFieldExpression><![CDATA[$F{STORAGELOCATIONPATH}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="1892" y="0" width="104" height="30" uuid="d9300f16-0986-4c76-8a46-a39fa17665fa"/>
 				<textFieldExpression><![CDATA[$F{PACKAGEID}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="1996" y="0" width="104" height="30" uuid="5507e3e4-75ef-447e-b31e-0c12b13a76dd"/>
 				<textFieldExpression><![CDATA[$F{SHIPPEDSTATUS}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="2100" y="0" width="104" height="30" uuid="076a5fd5-7238-42cc-999d-294552e33f55"/>
 				<textFieldExpression><![CDATA[$F{PACKAGECREATEDATE}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="2204" y="0" width="104" height="30" uuid="9f90d91f-22e8-47c1-abba-d780bf7bb85a"/>
 				<textFieldExpression><![CDATA[$F{PACKAGESHIPPEDDATE}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="2308" y="0" width="104" height="30" uuid="8bce719f-14df-4366-94aa-4a5b3497b747"/>
 				<textFieldExpression><![CDATA[$F{DESTINATION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="332" y="0" width="104" height="30" uuid="d9d321cd-71ad-46b5-9bfa-d868ad987d9b"/>
+				<textFieldExpression><![CDATA[$F{PROTOCOL}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
