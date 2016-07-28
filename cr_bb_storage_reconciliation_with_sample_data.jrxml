@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
+<!-- 2016-07-28T11:50:30 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_storage_reconciliation_with_sample_data" pageWidth="1800" pageHeight="612" orientation="Landscape" columnWidth="1800" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="inch"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LVQA1"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="STUDY_ID" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="QUERY_CORE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select null as externalparticipantid,
+       null as sstudyid,
+       su.labelpath,
+       'Box' as linksdcid,
+       ti_box.linkkeyid1,
+       box.u_alternateboxid,
+       null as altsampleid,
+       null as u_sponsorid,
+       null as sampletypeid,
+       null as containertypeid,
+       null as packagestatus,
+       d.departmentdesc,
+       sysuser.sysuserdesc
+  from (
+        select storageunitid,
+               ancestorid,
+               parentid,
+               storageunittype,
+               storageunitlabel,
+               linksdcid,
+               linkkeyid1,
+               labelpath,
+               securitydepartment
+          from storageunit
+         start with parentid is null
+         connect by prior storageunitid = parentid
+        ) su
+    join trackitem ti_box on ti_box.linksdcid = 'LV_Box' and ti_box.linksdcid = su.linksdcid and ti_box.linkkeyid1 = su.linkkeyid1
+    left outer join s_box box on box.s_boxid = su.linkkeyid1
+    join department d on d.departmentid = su.securitydepartment
+    join departmentsysuser dsu on dsu.departmentid = d.departmentid
+    join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid
+ where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and su.securitydepartment = $P{QUERY_CORE}
+union all
+select null as externalparticipantid,
+      null as sstudyid,
+       su.labelpath,
+       'Package' as linksdcid,
+       ti_pkg.linkkeyid1,
+       null as u_alternateboxid,
+       null as altsampleid,
+       null as u_sponsorid,
+       null as sampletypeid,
+       null as containertypeid,
+       pkg.packagestatus,
+       d.departmentdesc,
+       sysuser.sysuserdesc
+  from (
+        select storageunitid,
+               ancestorid,
+               parentid,
+               storageunittype,
+               storageunitlabel,
+               linksdcid,
+               linkkeyid1,
+               labelpath,
+               securitydepartment
+          from storageunit
+         start with parentid is null
+         connect by prior storageunitid = parentid
+        ) su
+    join trackitem ti_pkg on ti_pkg.linksdcid = 'LV_Package' and ti_pkg.linksdcid = su.linksdcid and ti_pkg.linkkeyid1 = su.linkkeyid1
+    left outer join s_package pkg on pkg.s_packageid = su.linkkeyid1
+    and su.linkkeyid1=pkg.S_PACKAGEID
+    join department d on d.departmentid = su.securitydepartment
+    join departmentsysuser dsu on dsu.departmentid = d.departmentid
+    join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid
+ where dsu.sysuserid =$P{SAPPHIRE_CurrentUser}
+   and su.securitydepartment = $P{QUERY_CORE}
+union all
+select null as externalparticipantid,
+null as sstudyid,
+       su.labelpath,
+       su.storageunittype,
+       null as linkkeyid1,
+       null as u_alternateboxid,
+       null as altsampleid,
+       null as u_sponsorid,
+       null as sampletypeid,
+       null as containertypeid,
+       null as packagestatus,
+       d.departmentdesc,
+       sysuser.sysuserdesc
+  from (
+        select storageunitid,
+               ancestorid,
+               parentid,
+               storageunittype,
+               storageunitlabel,
+               linksdcid,
+               linkkeyid1,
+               labelpath,
+               securitydepartment
+          from storageunit
+         start with parentid is null
+         connect by prior storageunitid = parentid
+        ) su
+    join department d on d.departmentid = su.securitydepartment
+    join departmentsysuser dsu on dsu.departmentid = d.departmentid
+    join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid
+ where (su.linksdcid = 'PhysicalStore' or su.linksdcid is null)
+   and su.storageunittype != 'BoxPos'
+   and not exists (
+     select *
+       from trackitem ti
+      where ti.currentstorageunitid = su.storageunitid
+   )
+   and dsu.sysuserid =$P{SAPPHIRE_CurrentUser}
+   and su.securitydepartment = $P{QUERY_CORE}
+union all
+select p.externalparticipantid,
+        p.sstudyid,
+       su.labelpath,
+       ti_sample.linksdcid,
+       ti_sample.linkkeyid1,
+       sb.altsampleid,
+       null as u_alternateboxid,
+       s.u_sponsorid,
+       s.sampletypeid,
+       ti_sample.containertypeid,
+       null as packagestatus,
+       d.departmentdesc,
+       sysuser.sysuserdesc
+  from (
+        select storageunitid,
+               ancestorid,
+               parentid,
+               storageunittype,
+               storageunitlabel,
+               linksdcid,
+               linkkeyid1,
+               labelpath,
+               securitydepartment
+          from storageunit s
+         start with parentid is null
+         connect by prior storageunitid = parentid
+        ) su
+    join trackitem ti_sample on ti_sample.linksdcid = 'Sample' and ti_sample.currentstorageunitid = su.storageunitid
+    join s_sample s on s.s_sampleid = ti_sample.linkkeyid1
+    join s_samplefamily sf on sf.s_samplefamilyid = s.samplefamilyid
+    left outer join s_participant p on p.s_participantid = sf.participantid
+    left outer join u_samplebank sb on sb.sampleid = s.s_sampleid
+    join department d on d.departmentid = su.securitydepartment
+    join departmentsysuser dsu on dsu.departmentid = d.departmentid
+    join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid
+ where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and su.securitydepartment = $P{QUERY_CORE}
+ 
+ 
+ order by 2,3]]>
+	</queryString>
+	<field name="EXTERNALPARTICIPANTID" class="java.lang.String"/>
+	<field name="SSTUDYID" class="java.lang.String"/>
+	<field name="LABELPATH" class="java.lang.String"/>
+	<field name="LINKSDCID" class="java.lang.String"/>
+	<field name="LINKKEYID1" class="java.lang.String"/>
+	<field name="U_ALTERNATEBOXID" class="java.lang.String"/>
+	<field name="ALTSAMPLEID" class="java.lang.String"/>
+	<field name="U_SPONSORID" class="java.lang.String"/>
+	<field name="SAMPLETYPEID" class="java.lang.String"/>
+	<field name="CONTAINERTYPEID" class="java.lang.String"/>
+	<field name="PACKAGESTATUS" class="java.lang.String"/>
+	<field name="DEPARTMENTDESC" class="java.lang.String"/>
+	<field name="SYSUSERDESC" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="144" height="30" uuid="f2077fcc-06a2-4322-b6d2-eb81aecfd1e4"/>
+				<text><![CDATA[EXTERNALPARTICIPANTID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="144" y="0" width="138" height="30" uuid="56181955-3485-4896-a655-0850adf2c668"/>
+				<text><![CDATA[SSTUDYID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="282" y="0" width="138" height="30" uuid="d9cdf414-1d51-4193-9f62-b0e326b73f5c"/>
+				<text><![CDATA[LABELPATH]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="0" width="138" height="30" uuid="883b8fad-b280-42f7-a616-a13f43eefccf"/>
+				<text><![CDATA[LINKSDCID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="558" y="0" width="138" height="30" uuid="bb431614-38b1-41cb-af76-11d0090f9ebb"/>
+				<text><![CDATA[LINKKEYID1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="696" y="0" width="138" height="30" uuid="2a82b973-3d23-40d5-9bd8-f7a4fbad699a"/>
+				<text><![CDATA[U_ALTERNATEBOXID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="834" y="0" width="138" height="30" uuid="5dc9b408-8c29-41bc-b9ca-2311e1403113"/>
+				<text><![CDATA[ALTSAMPLEID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="972" y="0" width="138" height="30" uuid="e7a2f790-bf3b-4d43-8526-06eff30336ab"/>
+				<text><![CDATA[U_SPONSORID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1110" y="0" width="138" height="30" uuid="0b3c8d5d-4341-4374-8b72-f177a4731649"/>
+				<text><![CDATA[SAMPLETYPEID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1248" y="0" width="138" height="30" uuid="990a96d8-e22e-4149-a2e5-7611e9086f1b"/>
+				<text><![CDATA[CONTAINERTYPEID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1386" y="0" width="138" height="30" uuid="7577c84a-d264-4e40-9cee-03ca5c6d4250"/>
+				<text><![CDATA[PACKAGESTATUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1524" y="0" width="138" height="30" uuid="0866f20d-9b73-4aea-a1b2-520e4cb267a1"/>
+				<text><![CDATA[DEPARTMENTDESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1662" y="0" width="138" height="30" uuid="e6e315d1-23b1-4d16-ba75-248068bd75de"/>
+				<text><![CDATA[SYSUSERDESC]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="144" height="30" uuid="9d3a18a8-9f87-4c88-9028-f058ae455410"/>
+				<textFieldExpression><![CDATA[$F{EXTERNALPARTICIPANTID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="144" y="0" width="138" height="30" uuid="289267e3-28ce-49ff-b921-3c765c639de1"/>
+				<textFieldExpression><![CDATA[$F{SSTUDYID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="282" y="0" width="138" height="30" uuid="edbefd8e-6b98-40c4-9aea-d1751fbd22e2"/>
+				<textFieldExpression><![CDATA[$F{LABELPATH}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="420" y="0" width="138" height="30" uuid="107fa25e-1aec-426b-8fd2-182163c16381"/>
+				<textFieldExpression><![CDATA[$F{LINKSDCID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="558" y="0" width="138" height="30" uuid="7963a0e8-c224-4fc4-bc03-6bd4b4ef2a46"/>
+				<textFieldExpression><![CDATA[$F{LINKKEYID1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="696" y="0" width="138" height="30" uuid="620a638f-955c-4ea8-8e84-17db9856fd22"/>
+				<textFieldExpression><![CDATA[$F{U_ALTERNATEBOXID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="834" y="0" width="138" height="30" uuid="a3179e92-c309-439c-8b88-68e7bee3bc83"/>
+				<textFieldExpression><![CDATA[$F{ALTSAMPLEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="972" y="0" width="138" height="30" uuid="9457f503-d2a8-432d-97b8-1cbf8e45da5c"/>
+				<textFieldExpression><![CDATA[$F{U_SPONSORID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1110" y="0" width="138" height="30" uuid="1ea85879-3f61-4ea8-b7ab-52043a317b64"/>
+				<textFieldExpression><![CDATA[$F{SAMPLETYPEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1248" y="0" width="138" height="30" uuid="c6013136-6b19-4aba-a04d-e609c208c295"/>
+				<textFieldExpression><![CDATA[$F{CONTAINERTYPEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1386" y="0" width="138" height="30" uuid="2ae77e11-5b41-4e69-ad61-15246811a737"/>
+				<textFieldExpression><![CDATA[$F{PACKAGESTATUS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1524" y="0" width="138" height="30" uuid="b3e7c78d-4ed2-404f-91bd-65cea0f79795"/>
+				<textFieldExpression><![CDATA[$F{DEPARTMENTDESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1662" y="0" width="138" height="30" uuid="97914c6b-8c88-4413-a435-bf0fea732f60"/>
+				<textFieldExpression><![CDATA[$F{SYSUSERDESC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
