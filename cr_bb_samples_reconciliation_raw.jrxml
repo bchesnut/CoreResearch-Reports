@@ -1,0 +1,779 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
+<!-- 2016-08-03T14:16:48 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_samples_reconciliation_raw" pageWidth="3500" pageHeight="612" orientation="Landscape" columnWidth="3500" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" whenResourceMissingType="Empty" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date"/>
+	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
+	<parameter name="WORKING_GROUP" class="java.lang.String"/>
+	<parameter name="STUDY_ID" class="java.lang.String"/>
+	<parameter name="EXTERNALPARTICIPANTID" class="java.lang.String"/>
+	<parameter name="SAMPLE_ID" class="java.lang.String"/>
+	<parameter name="SAMPLE_TYPE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select p.externalparticipantid,
+       p.s_participantid,
+       p.U_MRN,
+       (select listagg(irbid, ', ') within group (order by irbid)
+          from (
+            select distinct 
+                   cp.participantid,
+                   irb.irbid
+              from u_consentparticipntmap cp
+                left outer join u_consent c on c.u_consentid = cp.consentid
+                left outer join u_sdiirb irb on c.sdiirbid = irb.u_sdiirbid
+           )
+         where participantid = p.s_participantid
+       ) as Protocol,
+       st.studydesc,
+       s.s_sampleid,
+       s.U_TOPPARENT as Parent,
+       sb.altsampleid,
+       s.SAMPLESTATUS,
+       s.u_processeddt,
+       s.u_processedby,
+       s.specimentype,
+       s.u_percenttumornuclei,
+       s.u_percentnecrosis,
+       s.u_histologicdiag as HistologicDx,
+       cd.clinicaldiagdesc as HistologixDxDesc,
+       pd.pathdiagnosisid,
+       cd2.clinicaldiagdesc as PathologicalDxDesc,
+       s.samplefamilyid,
+       sf.deviationdesc,
+       nvl(t.freezethawcount,0) as freezethawcount,
+       sf.u_tissuecount,
+       sf.u_dimension,
+       sf.u_grossappearance as GrossAppearance,
+       s.u_processingdelay as ColdIschemiaTime,
+       s.receiveddt as Sample_ReceivedOrConfirmedDT,
+       s.COLLECTIONDT as Sample_CollectionDT,
+       sf.collectmethodid,
+       sf.collectiondt as SampleFamily_CollectionDT,
+       s.u_sponsorid,
+       s.sampletypeid,
+       sd.additive,
+       anat_site.tissue_desc as Anatomic_site_of_finding,
+       body_site.tissue_desc as Body_site_of_origin,
+       rc.restrictclassdesc,
+       sdialias.alias,
+       su.labelpath as StorageLocationPath,
+       su.storageunitlabel as PackageID,
+       s_package.packagestatus as ShippedStatus,
+       s_package.createdt as PackageCreateDate,
+       s_package.moddt as PackageShippedDate,
+       s_package.recipientdepartmentid as Destination,
+       decode(t.qtyunits, 'uL', trim(to_char(t.qtycurrent)), 'mL', trim(to_char(t.qtycurrent * 1000)), t.qtycurrent || ' ' || t.qtyunits ) as qtycurrent,
+       round((s.u_processeddt - sf.collectiondt) * 1440,0) as TimeToProcess,
+       d.departmentdesc,
+       sysuser.sysuserdesc,
+       ps.sampletypeid as parent_sampletypeid,
+       quant.paramlistid,
+       quant.concentration,
+       quant.quantity,
+       quant.od_260,
+       quant.od_280,
+       quant.od_230,
+       quant.gel_quality,
+       quant.rin_score,
+       quant.din_score
+  from s_sample s
+    join s_samplefamily sf on sf.s_samplefamilyid = s.samplefamilyid
+    join s_participant p on p.s_participantid = sf.participantid
+    left outer join s_participantevent pe on pe.PARTICIPANTID = p.s_participantid and pe.s_participanteventid = sf.participanteventid
+    join u_samplebank sb on sb.sampleid = s.s_sampleid
+    join s_study st on st.s_studyid = sf.sstudyid
+    join department d on d.departmentid = st.securitydepartment
+    join departmentsysuser dsu on dsu.departmentid = d.departmentid
+    join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid
+    left outer join s_restrictclass rc on rc.s_restrictclassid = sf.restrictclassid
+    left outer join trackitem t on t.linksdcid = 'Sample' and t.linkkeyid1 = s.s_sampleid
+    left outer join storageunit su on su.storageunitid = t.currentstorageunitid
+    left outer join s_package on su.STORAGEUNITLABEL=s_package.S_PACKAGEID
+    left outer join s_samplemap m on m.destsampleid = s.s_sampleid
+    left outer join s_sample ps on ps.s_sampleid = m.sourcesampleid
+    left outer join v_duke_tissuetree anat_site on anat_site.s_tissueid = sf.tissueid
+    left outer join v_duke_tissuetree body_site on body_site.s_tissueid = s.u_bodysiteoforigin
+    left outer join s_clinicaldiag cd on cd.s_clinicaldiagid = s.u_histologicdiag
+    left outer join u_pathdiagnosis pd on pd.s_participanteventid = pe.S_PARTICIPANTEVENTID
+    left outer join s_clinicaldiag cd2 on cd2.s_clinicaldiagid = pd.pathdiagnosisid
+    left outer join
+      (select s_sampleid,
+              listagg(detailkeyid1, ', ') within group (order by detailkeyid1) as additive
+         from s_sampledetail
+        where detailtype = 'Treatment'
+        group by s_sampleid
+      ) sd on sd.s_sampleid = s.s_sampleid
+    left outer join
+      (select keyid1,
+              listagg(aliasid, ', ') within group (order by aliasid) as alias
+         from sdialias
+        where sdcid = 'LV_Participant'
+        group by keyid1
+      ) sdialias on sdialias.keyid1 = p.s_participantid
+    left outer join 
+       (select keyid1,
+               paramlistid,
+               sdidataid,
+               test_date,
+               concentration,
+               quantity,
+               od_260,
+               od_280,
+               od_230,
+               gel_quality,
+               rin_score,
+               din_score
+          from (
+        select keyid1,
+               paramlistid,
+               to_number(sdidataid) as sdidataid,
+               max(to_number(sdidataid)) over (partition by keyid1) as max_sdidataid,
+               test_date,
+               concentration,
+               quantity,
+               od_260,
+               od_280,
+               od_230,
+               gel_quality,
+               rin_score,
+               din_score
+          from (
+        select sdd.keyid1,
+               sdd.sdcid,
+               sdd.paramlistid,
+               sdd.paramlistversionid,
+               sdd.variantid,
+               sdd.dataset,
+               sdd.sdidataid,
+               nvl(sdd.moddt, sdd.createdt) as test_date,
+               max(decode(di.paramid, 'Concentration', di.displayvalue)) as concentration,
+               max(decode(di.paramid, 'Quantity', di.displayvalue))      as quantity,
+               max(decode(di.paramid, 'OD 260', di.transformvalue))      as od_260,
+               max(decode(di.paramid, 'OD 280', di.transformvalue))      as od_280,
+               max(decode(di.paramid, 'OD 230', di.transformvalue))      as od_230,
+               max(decode(di.paramid, 'Gel quality', di.displayvalue))   as gel_quality,
+               max(decode(di.paramid, 'RIN score', di.displayvalue))     as rin_score,
+               max(decode(di.paramid, 'DIN score', di.displayvalue))     as din_score
+          from sdidata sdd
+            join sdidataitem di on di.sdcid = sdd.sdcid and di.keyid1 = sdd.keyid1
+             and di.paramlistid = sdd.paramlistid and di.paramlistversionid = sdd.paramlistversionid
+             and di.variantid = sdd.variantid and di.dataset = sdd.dataset
+         where sdd.sdcid = 'Sample'
+           and sdd.paramlistid in ('Quant', 'DNA Quant', 'RNA Quant')
+         group by sdd.keyid1,
+               sdd.sdcid,
+               sdd.paramlistid,
+               sdd.paramlistversionid,
+               sdd.variantid,
+               sdd.dataset,
+               sdd.sdidataid,
+               nvl(sdd.moddt, sdd.createdt)
+       )
+       )
+        where sdidataid = max_sdidataid
+       ) quant on quant.keyid1 = s.s_sampleid
+ WHERE dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   AND ($P{STUDY_ID} is null OR ($P{STUDY_ID} IS NOT NULL AND instr($P{STUDY_ID} || ';', st.s_studyid || ';') > 0))
+   AND (sf.COLLECTIONDT between $P{SAPPHIRE_START_DATE} AND trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+    OR  s.receiveddt between $P{SAPPHIRE_START_DATE}    AND trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   )
+   AND ($P{SAMPLE_ID} is null or ($P{SAMPLE_ID} IS NOT NULL AND (
+       s.s_sampleid = $P{SAMPLE_ID} 
+    OR s.u_sponsorid = $P{SAMPLE_ID} 
+    OR sb.altsampleid = $P{SAMPLE_ID}
+   )))
+   AND ($P{SAMPLE_TYPE} IS NULL OR ($P{SAMPLE_TYPE} IS NOT NULL and s.sampletypeid =  $P{SAMPLE_TYPE}))
+order by 2
+]]>
+	</queryString>
+	<field name="EXTERNALPARTICIPANTID" class="java.lang.String"/>
+	<field name="S_PARTICIPANTID" class="java.lang.String"/>
+	<field name="U_MRN" class="java.lang.String"/>
+	<field name="PROTOCOL" class="java.lang.String"/>
+	<field name="STUDYDESC" class="java.lang.String"/>
+	<field name="S_SAMPLEID" class="java.lang.String"/>
+	<field name="PARENT" class="java.lang.String"/>
+	<field name="ALTSAMPLEID" class="java.lang.String"/>
+	<field name="SAMPLESTATUS" class="java.lang.String"/>
+	<field name="U_PROCESSEDDT" class="java.sql.Timestamp"/>
+	<field name="U_PROCESSEDBY" class="java.lang.String"/>
+	<field name="SPECIMENTYPE" class="java.lang.String"/>
+	<field name="U_PERCENTTUMORNUCLEI" class="java.math.BigDecimal"/>
+	<field name="U_PERCENTNECROSIS" class="java.math.BigDecimal"/>
+	<field name="HISTOLOGICDX" class="java.lang.String"/>
+	<field name="HISTOLOGIXDXDESC" class="java.lang.String"/>
+	<field name="PATHDIAGNOSISID" class="java.lang.String"/>
+	<field name="PATHOLOGICALDXDESC" class="java.lang.String"/>
+	<field name="SAMPLEFAMILYID" class="java.lang.String"/>
+	<field name="DEVIATIONDESC" class="java.lang.String"/>
+	<field name="FREEZETHAWCOUNT" class="java.math.BigDecimal"/>
+	<field name="U_TISSUECOUNT" class="java.math.BigDecimal"/>
+	<field name="U_DIMENSION" class="java.lang.String"/>
+	<field name="GROSSAPPEARANCE" class="java.lang.String"/>
+	<field name="COLDISCHEMIATIME" class="java.math.BigDecimal"/>
+	<field name="SAMPLE_RECEIVEDORCONFIRMEDDT" class="java.sql.Timestamp"/>
+	<field name="SAMPLE_COLLECTIONDT" class="java.sql.Timestamp"/>
+	<field name="COLLECTMETHODID" class="java.lang.String"/>
+	<field name="SAMPLEFAMILY_COLLECTIONDT" class="java.sql.Timestamp"/>
+	<field name="U_SPONSORID" class="java.lang.String"/>
+	<field name="SAMPLETYPEID" class="java.lang.String"/>
+	<field name="ADDITIVE" class="java.lang.String"/>
+	<field name="ANATOMIC_SITE_OF_FINDING" class="java.lang.String"/>
+	<field name="BODY_SITE_OF_ORIGIN" class="java.lang.String"/>
+	<field name="RESTRICTCLASSDESC" class="java.lang.String"/>
+	<field name="ALIAS" class="java.lang.String"/>
+	<field name="STORAGELOCATIONPATH" class="java.lang.String"/>
+	<field name="PACKAGEID" class="java.lang.String"/>
+	<field name="SHIPPEDSTATUS" class="java.lang.String"/>
+	<field name="PACKAGECREATEDATE" class="java.sql.Timestamp"/>
+	<field name="PACKAGESHIPPEDDATE" class="java.sql.Timestamp"/>
+	<field name="DESTINATION" class="java.lang.String"/>
+	<field name="QTYCURRENT" class="java.lang.String"/>
+	<field name="TIMETOPROCESS" class="java.math.BigDecimal"/>
+	<field name="DEPARTMENTDESC" class="java.lang.String"/>
+	<field name="SYSUSERDESC" class="java.lang.String"/>
+	<field name="PARENT_SAMPLETYPEID" class="java.lang.String"/>
+	<field name="PARAMLISTID" class="java.lang.String"/>
+	<field name="CONCENTRATION" class="java.lang.String"/>
+	<field name="QUANTITY" class="java.lang.String"/>
+	<field name="OD_260" class="java.math.BigDecimal"/>
+	<field name="OD_280" class="java.math.BigDecimal"/>
+	<field name="OD_230" class="java.math.BigDecimal"/>
+	<field name="GEL_QUALITY" class="java.lang.String"/>
+	<field name="RIN_SCORE" class="java.lang.String"/>
+	<field name="DIN_SCORE" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<columnHeader>
+		<band height="30">
+			<staticText>
+				<reportElement x="0" y="0" width="90" height="30" uuid="78eb74ba-c218-44ae-80c6-5fb3dbdcc5c0"/>
+				<text><![CDATA[EXTERNALPARTICIPANTID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="0" width="62" height="30" uuid="1b711560-e515-47a0-8753-f5a81da962ad"/>
+				<text><![CDATA[S_PARTICIPANTID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="152" y="0" width="62" height="30" uuid="06568da8-25f2-4a47-baa2-6d44f73e4b37"/>
+				<text><![CDATA[U_MRN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="214" y="0" width="62" height="30" uuid="21f873f6-a574-4c5e-b36d-d1590a7e9c7e"/>
+				<text><![CDATA[PROTOCOL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="276" y="0" width="62" height="30" uuid="fcb40797-5e81-456f-8404-2c108dafa9c1"/>
+				<text><![CDATA[STUDYDESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="338" y="0" width="62" height="30" uuid="4398c0d6-b45a-47f1-a87d-36ee106ab2df"/>
+				<text><![CDATA[S_SAMPLEID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="0" width="62" height="30" uuid="47deadc3-d3bf-4a37-9fa9-9199e4928fa7"/>
+				<text><![CDATA[PARENT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="462" y="0" width="62" height="30" uuid="64d852e9-d4c4-46c3-8841-82b76dee05f9"/>
+				<text><![CDATA[ALTSAMPLEID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="524" y="0" width="62" height="30" uuid="05dbc9c7-b4ac-4d73-9a9b-275207c6b4f1"/>
+				<text><![CDATA[SAMPLESTATUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="586" y="0" width="62" height="30" uuid="094af6e8-46a0-4c4a-acd6-bc6ecb98e4c1"/>
+				<text><![CDATA[U_PROCESSEDDT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="648" y="0" width="62" height="30" uuid="51f7af74-6322-4af0-ae23-68052c40e6a4"/>
+				<text><![CDATA[U_PROCESSEDBY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="710" y="0" width="62" height="30" uuid="7b2b762c-8c8a-4ebe-8649-392c5f52e871"/>
+				<text><![CDATA[SPECIMENTYPE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="772" y="0" width="62" height="30" uuid="904d5422-14cf-49db-ab7c-ea085519c950"/>
+				<text><![CDATA[U_PERCENTTUMORNUCLEI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="834" y="0" width="62" height="30" uuid="1a45aed6-a5ca-4a74-95df-579f6e1b918b"/>
+				<text><![CDATA[U_PERCENTNECROSIS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="896" y="0" width="62" height="30" uuid="26b9484f-2ed0-4a6f-9422-32111a1f163d"/>
+				<text><![CDATA[HISTOLOGICDX]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="958" y="0" width="62" height="30" uuid="8a077f5f-6c4e-4abd-a5c5-34889e245861"/>
+				<text><![CDATA[HISTOLOGIXDXDESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1020" y="0" width="62" height="30" uuid="be0650bf-4156-414c-a80c-54225134f9dd"/>
+				<text><![CDATA[PATHDIAGNOSISID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1082" y="0" width="62" height="30" uuid="32e6b45b-8667-4415-8ea7-f7bc0d0da5af"/>
+				<text><![CDATA[PATHOLOGICALDXDESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1144" y="0" width="62" height="30" uuid="0beb8afc-c49d-43ba-ae57-0a36e7501590"/>
+				<text><![CDATA[SAMPLEFAMILYID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1206" y="0" width="62" height="30" uuid="2d423b84-e2e1-4730-a4f6-fd6d0eb36b55"/>
+				<text><![CDATA[DEVIATIONDESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1268" y="0" width="62" height="30" uuid="b220612c-a112-4ae6-97e2-3f0b0c7ab072"/>
+				<text><![CDATA[FREEZETHAWCOUNT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1330" y="0" width="62" height="30" uuid="f8e33848-1d25-4a50-bba5-0785f506cf27"/>
+				<text><![CDATA[U_TISSUECOUNT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1392" y="0" width="62" height="30" uuid="4f90f12c-160f-450a-bca2-d949ec4999ae"/>
+				<text><![CDATA[U_DIMENSION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1454" y="0" width="62" height="30" uuid="b3d6c3b4-c89d-44f9-b1b7-4f58876c63d6"/>
+				<text><![CDATA[GROSSAPPEARANCE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1516" y="0" width="62" height="30" uuid="99ecbef7-735e-48cf-9a09-f2ab345db35a"/>
+				<text><![CDATA[COLDISCHEMIATIME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1578" y="0" width="62" height="30" uuid="ac5b10f8-71cf-4227-9bb4-71414df0f692"/>
+				<text><![CDATA[SAMPLE_RECEIVEDORCONFIRMEDDT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1640" y="0" width="62" height="30" uuid="7b4a5b85-20a8-4a08-8883-524901285f48"/>
+				<text><![CDATA[SAMPLE_COLLECTIONDT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1702" y="0" width="62" height="30" uuid="35936548-65d6-4bd3-bbc2-9c15f6bf282c"/>
+				<text><![CDATA[COLLECTMETHODID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1764" y="0" width="62" height="30" uuid="1eac27ef-f34b-4fbf-822c-d2c327cf51a9"/>
+				<text><![CDATA[SAMPLEFAMILY_COLLECTIONDT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1826" y="0" width="62" height="30" uuid="da6c59f9-cfcd-4d72-afb9-71a2eb0b8ed5"/>
+				<text><![CDATA[U_SPONSORID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1888" y="0" width="62" height="30" uuid="cc2b9527-92f3-422a-a42c-d48af3799ca5"/>
+				<text><![CDATA[SAMPLETYPEID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1950" y="0" width="62" height="30" uuid="a719eb26-74f4-4d71-b20b-f625f54373ec"/>
+				<text><![CDATA[ADDITIVE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2012" y="0" width="62" height="30" uuid="a9dfb2f0-9a05-4834-8cf7-262c8aead877"/>
+				<text><![CDATA[ANATOMIC_SITE_OF_FINDING]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2074" y="0" width="62" height="30" uuid="09327aa9-87b5-4586-a4f7-3633fa091886"/>
+				<text><![CDATA[BODY_SITE_OF_ORIGIN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2136" y="0" width="62" height="30" uuid="ea5b50e1-93ba-4ca4-ae77-13020cb3a5ee"/>
+				<text><![CDATA[RESTRICTCLASSDESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2198" y="0" width="62" height="30" uuid="30288d12-b074-4165-94a2-196a88b0fbc9"/>
+				<text><![CDATA[ALIAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2260" y="0" width="62" height="30" uuid="3b3d9a4a-bb18-4994-b9d9-77d59c687a51"/>
+				<text><![CDATA[STORAGELOCATIONPATH]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2322" y="0" width="62" height="30" uuid="e3e90267-34fd-4a22-9256-465e00536f91"/>
+				<text><![CDATA[PACKAGEID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2384" y="0" width="62" height="30" uuid="810af1a2-29f7-4c2e-865a-eec357b362b4"/>
+				<text><![CDATA[SHIPPEDSTATUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2446" y="0" width="62" height="30" uuid="fadda2aa-3c91-4759-9cea-ca4be06feb1c"/>
+				<text><![CDATA[PACKAGECREATEDATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2508" y="0" width="62" height="30" uuid="28a0d9a3-8523-479e-a26c-fd8c678996fd"/>
+				<text><![CDATA[PACKAGESHIPPEDDATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2570" y="0" width="62" height="30" uuid="8979fbfa-fa8d-458f-9174-e7f5907a9f22"/>
+				<text><![CDATA[DESTINATION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2632" y="0" width="62" height="30" uuid="562347ac-611d-47dc-b7d3-e619d1c0e0ff"/>
+				<text><![CDATA[QTYCURRENT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2694" y="0" width="62" height="30" uuid="4bca58e9-6bfd-4e0a-bb2f-e80011f7dc1b"/>
+				<text><![CDATA[TIMETOPROCESS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2756" y="0" width="62" height="30" uuid="0b3a537f-e062-4f09-9efc-e13a6d9869e1"/>
+				<text><![CDATA[DEPARTMENTDESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2818" y="0" width="62" height="30" uuid="31be3b6e-c07a-4464-8439-8fff1fc2a635"/>
+				<text><![CDATA[SYSUSERDESC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2880" y="0" width="62" height="30" uuid="8c5c617a-2a6e-4f2d-82be-a8b72fbd7f65"/>
+				<text><![CDATA[PARENT_SAMPLETYPEID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2942" y="0" width="62" height="30" uuid="b0d42a1c-6bff-4081-aa90-be7017063907"/>
+				<text><![CDATA[PARAMLISTID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3004" y="0" width="62" height="30" uuid="b69ae8eb-0ebd-47ae-b7d4-b70990ceb042"/>
+				<text><![CDATA[CONCENTRATION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3066" y="0" width="62" height="30" uuid="4a5236b4-7e04-4fb2-a62b-46b69cee1737"/>
+				<text><![CDATA[QUANTITY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3128" y="0" width="62" height="30" uuid="8d4dfd9d-8927-4217-8b14-0ae0eb644d66"/>
+				<text><![CDATA[OD_260]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3190" y="0" width="62" height="30" uuid="bef8a8e1-acef-417e-b477-9e9a3942d24d"/>
+				<text><![CDATA[OD_280]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3252" y="0" width="62" height="30" uuid="04885c81-616d-46a1-86a5-fa5679da6a05"/>
+				<text><![CDATA[OD_230]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3314" y="0" width="62" height="30" uuid="64924db6-d5e8-4fd1-81f7-8d4f8bc2cea0"/>
+				<text><![CDATA[GEL_QUALITY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3376" y="0" width="62" height="30" uuid="4582ab66-3f0f-496c-a9c8-72f18e160f7e"/>
+				<text><![CDATA[RIN_SCORE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3438" y="0" width="62" height="30" uuid="24b59423-c375-4fda-a4e9-00c0159d69fc"/>
+				<text><![CDATA[DIN_SCORE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="90" height="30" uuid="e1412519-06eb-4d2b-93ad-597b637f7586"/>
+				<textFieldExpression><![CDATA[$F{EXTERNALPARTICIPANTID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="90" y="0" width="62" height="30" uuid="8d6c4250-949d-4820-af5c-dd9bf294fc99"/>
+				<textFieldExpression><![CDATA[$F{S_PARTICIPANTID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="152" y="0" width="62" height="30" uuid="90af6fe3-f9f4-4a27-b305-0fe7575042af"/>
+				<textFieldExpression><![CDATA[$F{U_MRN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="214" y="0" width="62" height="30" uuid="c270cb1b-3904-44b5-84ed-ebaa8498d186"/>
+				<textFieldExpression><![CDATA[$F{PROTOCOL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="276" y="0" width="62" height="30" uuid="653ff88f-ed84-4c17-9905-36cbb1fde849"/>
+				<textFieldExpression><![CDATA[$F{STUDYDESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="338" y="0" width="62" height="30" uuid="3acd9d19-f31c-4ecc-8ad1-ca97a431cb2d"/>
+				<textFieldExpression><![CDATA[$F{S_SAMPLEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="400" y="0" width="62" height="30" uuid="ad80b66d-090c-40ff-be2c-a6685cdcd261"/>
+				<textFieldExpression><![CDATA[$F{PARENT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="462" y="0" width="62" height="30" uuid="9b5601fa-de89-40a5-88da-bab204f771d7"/>
+				<textFieldExpression><![CDATA[$F{ALTSAMPLEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="524" y="0" width="62" height="30" uuid="90bff266-656c-4b52-991b-39fce709f174"/>
+				<textFieldExpression><![CDATA[$F{SAMPLESTATUS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="586" y="0" width="62" height="30" uuid="e2f20e0e-69d3-4f93-8359-e9ce912a574d"/>
+				<textFieldExpression><![CDATA[$F{U_PROCESSEDDT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="648" y="0" width="62" height="30" uuid="46e1cbe7-6639-46e9-bade-eb8a43237e88"/>
+				<textFieldExpression><![CDATA[$F{U_PROCESSEDBY}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="710" y="0" width="62" height="30" uuid="bf73f734-02e8-4df8-b312-6ce5ef37d16e"/>
+				<textFieldExpression><![CDATA[$F{SPECIMENTYPE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="772" y="0" width="62" height="30" uuid="4afed231-fc92-4587-bf24-395cfdee42eb"/>
+				<textFieldExpression><![CDATA[$F{U_PERCENTTUMORNUCLEI}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="834" y="0" width="62" height="30" uuid="03ef2a62-47f0-4fc2-ad43-b4a5f8966bb9"/>
+				<textFieldExpression><![CDATA[$F{U_PERCENTNECROSIS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="896" y="0" width="62" height="30" uuid="77d2062a-b976-4fe7-a5e1-980797c6cbd6"/>
+				<textFieldExpression><![CDATA[$F{HISTOLOGICDX}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="958" y="0" width="62" height="30" uuid="75ce2bf5-4b53-409f-8b08-29f707f6d24b"/>
+				<textFieldExpression><![CDATA[$F{HISTOLOGIXDXDESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1020" y="0" width="62" height="30" uuid="64638119-12de-452d-affa-653d288a7a48"/>
+				<textFieldExpression><![CDATA[$F{PATHDIAGNOSISID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1082" y="0" width="62" height="30" uuid="9748237a-f85a-4c0c-8141-06a42cd6465b"/>
+				<textFieldExpression><![CDATA[$F{PATHOLOGICALDXDESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1144" y="0" width="62" height="30" uuid="b991ad87-ce22-4eaa-bd18-19e0159902b5"/>
+				<textFieldExpression><![CDATA[$F{SAMPLEFAMILYID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1206" y="0" width="62" height="30" uuid="d30563e8-9c26-4161-a3be-16a408923682"/>
+				<textFieldExpression><![CDATA[$F{DEVIATIONDESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1268" y="0" width="62" height="30" uuid="ae96f806-eb9a-4ff3-879f-06975a1fd04a"/>
+				<textFieldExpression><![CDATA[$F{FREEZETHAWCOUNT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1330" y="0" width="62" height="30" uuid="1da83368-5837-4c1a-b640-eae6e2ec8d5d"/>
+				<textFieldExpression><![CDATA[$F{U_TISSUECOUNT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1392" y="0" width="62" height="30" uuid="20a533d9-16cf-4fa0-b40d-594a6cc2b512"/>
+				<textFieldExpression><![CDATA[$F{U_DIMENSION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1454" y="0" width="62" height="30" uuid="667a9a98-e5b5-4ce6-ab69-857f9404dc10"/>
+				<textFieldExpression><![CDATA[$F{GROSSAPPEARANCE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1516" y="0" width="62" height="30" uuid="1e80cd08-816a-4df8-969f-3fec82da0a19"/>
+				<textFieldExpression><![CDATA[$F{COLDISCHEMIATIME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1578" y="0" width="62" height="30" uuid="e172a8a5-248c-4460-bfb8-6f2ce5eb88da"/>
+				<textFieldExpression><![CDATA[$F{SAMPLE_RECEIVEDORCONFIRMEDDT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1640" y="0" width="62" height="30" uuid="a1a0322c-ad04-4227-852a-82fe2b1f5834"/>
+				<textFieldExpression><![CDATA[$F{SAMPLE_COLLECTIONDT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1702" y="0" width="62" height="30" uuid="c4122ddc-db6c-4490-bcf6-071dae983786"/>
+				<textFieldExpression><![CDATA[$F{COLLECTMETHODID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1764" y="0" width="62" height="30" uuid="f67dd7d3-939c-4e00-bea8-67e34bdee336"/>
+				<textFieldExpression><![CDATA[$F{SAMPLEFAMILY_COLLECTIONDT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1826" y="0" width="62" height="30" uuid="b9d3e84b-0516-4623-bfb5-bfbc79995496"/>
+				<textFieldExpression><![CDATA[$F{U_SPONSORID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1888" y="0" width="62" height="30" uuid="1edc6f32-f5c6-4182-98e5-b0115c7fc9a1"/>
+				<textFieldExpression><![CDATA[$F{SAMPLETYPEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1950" y="0" width="62" height="30" uuid="75aece15-f93e-4a44-8f2e-8ef2cfe97171"/>
+				<textFieldExpression><![CDATA[$F{ADDITIVE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2012" y="0" width="62" height="30" uuid="2f662d51-60ec-4933-9a6d-d3185ee4d97e"/>
+				<textFieldExpression><![CDATA[$F{ANATOMIC_SITE_OF_FINDING}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2074" y="0" width="62" height="30" uuid="a9c5fec4-d543-48bb-bf66-c4ce67393b74"/>
+				<textFieldExpression><![CDATA[$F{BODY_SITE_OF_ORIGIN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2136" y="0" width="62" height="30" uuid="372b2c75-e4d4-4650-8e89-bb5c6e8c01ed"/>
+				<textFieldExpression><![CDATA[$F{RESTRICTCLASSDESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2198" y="0" width="62" height="30" uuid="4314a7ee-5e46-4950-9dd7-cdf37fed5890"/>
+				<textFieldExpression><![CDATA[$F{ALIAS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2260" y="0" width="62" height="30" uuid="40ce47c4-b378-4145-8e80-bdfe7ef64c3a"/>
+				<textFieldExpression><![CDATA[$F{STORAGELOCATIONPATH}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2322" y="0" width="62" height="30" uuid="d974a1cb-e4d9-4ef8-bfe7-ee1561b972f4"/>
+				<textFieldExpression><![CDATA[$F{PACKAGEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2384" y="0" width="62" height="30" uuid="78fb29fd-fdda-4284-aaa0-c47bd243d41e"/>
+				<textFieldExpression><![CDATA[$F{SHIPPEDSTATUS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2446" y="0" width="62" height="30" uuid="3b296dea-682a-4a96-9d51-9c59729814e7"/>
+				<textFieldExpression><![CDATA[$F{PACKAGECREATEDATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2508" y="0" width="62" height="30" uuid="3d507762-48f7-4e3a-bb83-340c9ab253fc"/>
+				<textFieldExpression><![CDATA[$F{PACKAGESHIPPEDDATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2570" y="0" width="62" height="30" uuid="e58cc17b-940f-4cc5-9b05-7dbef81abbab"/>
+				<textFieldExpression><![CDATA[$F{DESTINATION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2632" y="0" width="62" height="30" uuid="02ecf83d-d238-4647-99e7-3355ed10f9c7"/>
+				<textFieldExpression><![CDATA[$F{QTYCURRENT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2694" y="0" width="62" height="30" uuid="8854f606-e654-4df1-8a16-3fd3084c6d5c"/>
+				<textFieldExpression><![CDATA[$F{TIMETOPROCESS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2756" y="0" width="62" height="30" uuid="9992b4b5-1916-4db7-97fb-df7b69214676"/>
+				<textFieldExpression><![CDATA[$F{DEPARTMENTDESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2818" y="0" width="62" height="30" uuid="b4681099-f651-4645-b1b8-f5d548944915"/>
+				<textFieldExpression><![CDATA[$F{SYSUSERDESC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2880" y="0" width="62" height="30" uuid="88540679-15c2-4e0c-ac62-8ef0a66a397b"/>
+				<textFieldExpression><![CDATA[$F{PARENT_SAMPLETYPEID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2942" y="0" width="62" height="30" uuid="8ff9b5f9-9ca6-43c2-945d-e60806b50b43"/>
+				<textFieldExpression><![CDATA[$F{PARAMLISTID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3004" y="0" width="62" height="30" uuid="eb1f5f2e-dc05-4f8c-bcdb-31b12f4e0003"/>
+				<textFieldExpression><![CDATA[$F{CONCENTRATION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3066" y="0" width="62" height="30" uuid="437b8d5d-f3af-4b20-9e9a-ae4a574b8e61"/>
+				<textFieldExpression><![CDATA[$F{QUANTITY}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3128" y="0" width="62" height="30" uuid="996d6857-020b-4de7-9258-75ba1290099a"/>
+				<textFieldExpression><![CDATA[$F{OD_260}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3190" y="0" width="62" height="30" uuid="6c94d3e9-7c79-433e-8329-aa87f7f6b949"/>
+				<textFieldExpression><![CDATA[$F{OD_280}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3252" y="0" width="62" height="30" uuid="9da15119-b13f-4248-9eb4-cba3b4c5c3c1"/>
+				<textFieldExpression><![CDATA[$F{OD_230}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3314" y="0" width="62" height="30" uuid="421a46f3-9c1b-4729-9e30-2d4202c39034"/>
+				<textFieldExpression><![CDATA[$F{GEL_QUALITY}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3376" y="0" width="62" height="30" uuid="5f882856-e8c7-4320-b165-18b9ebcd51ef"/>
+				<textFieldExpression><![CDATA[$F{RIN_SCORE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3438" y="0" width="62" height="30" uuid="b1724cf1-f2ab-4422-88dc-1da24eda1095"/>
+				<textFieldExpression><![CDATA[$F{DIN_SCORE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
