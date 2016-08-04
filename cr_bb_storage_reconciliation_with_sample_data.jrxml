@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
-<!-- 2016-07-28T14:42:54 -->
+<!-- 2016-08-02T13:26:34 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_storage_reconciliation_with_sample_data" pageWidth="1800" pageHeight="612" orientation="Landscape" columnWidth="1800" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -80,6 +80,7 @@
        ti_box.linkkeyid1,
        box.u_alternateboxid,
        null as altsampleid,
+       null as samplestatus,
        null as u_sponsorid,
        null as sampletypeid,
        null as containertypeid,
@@ -115,6 +116,7 @@ select null as externalparticipantid,
        ti_pkg.linkkeyid1,
        null as u_alternateboxid,
        null as altsampleid,
+       null as samplestatus,
        null as u_sponsorid,
        null as sampletypeid,
        null as containertypeid,
@@ -150,6 +152,7 @@ null as sstudyid,
        su.storageunittype,
        null as linkkeyid1,
        null as u_alternateboxid,
+       null as samplestatus,
        null as altsampleid,
        null as u_sponsorid,
        null as sampletypeid,
@@ -192,6 +195,7 @@ select p.externalparticipantid,
        ti_sample.linkkeyid1,
        sb.altsampleid,
        null as u_alternateboxid,
+       s.samplestatus,
        s.u_sponsorid,
        s.sampletypeid,
        ti_sample.containertypeid,
@@ -232,6 +236,7 @@ select p.externalparticipantid,
 	<field name="LINKKEYID1" class="java.lang.String"/>
 	<field name="U_ALTERNATEBOXID" class="java.lang.String"/>
 	<field name="ALTSAMPLEID" class="java.lang.String"/>
+	<field name="SAMPLESTATUS" class="java.lang.String"/>
 	<field name="U_SPONSORID" class="java.lang.String"/>
 	<field name="SAMPLETYPEID" class="java.lang.String"/>
 	<field name="CONTAINERTYPEID" class="java.lang.String"/>
