@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
-<!-- 2016-07-12T15:01:27 -->
+<!-- 2016-08-10T09:39:01 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_brpc_samples_by_count" pageWidth="612" pageHeight="792" columnWidth="576" leftMargin="18" rightMargin="18" topMargin="18" bottomMargin="18" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -85,7 +85,9 @@ from s_sample s
 
  Where dsu.sysuserid= $P{SAPPHIRE_CurrentUser} 
 
-  and s.createdt  between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   )
   
    and ($P{STUDY_ID} is null or ($P{STUDY_ID} is not null and s.sstudyid = $P{STUDY_ID} ))
 
