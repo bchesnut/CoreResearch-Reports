@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_sr_financial_details" pageWidth="4920" pageHeight="612" orientation="Landscape" columnWidth="4920" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
+<!-- 2016-08-23T07:23:08 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_sr_financial_details" pageWidth="5107" pageHeight="612" orientation="Landscape" columnWidth="5107" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" isIgnorePagination="true" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LVQA1"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="inch"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -114,6 +121,8 @@
        f.fundsourcedesc as project_name,
        sdi.invoiceid as invoice_id,
        inv.invcreatedt as invoice_date,
+       inv.fiscalperiod,
+       d.u_corecostcenter,     
        inv.status as invoice_status,
        sdi.serviceid as service_task_id,
        sdi.servicename as service_task_name,
@@ -149,7 +158,7 @@
    and ($P{QUERY_MEMBERSHIP} is null   or (sdi.membership is not null and instr($P{QUERY_MEMBERSHIP}, sdi.membership || '|') > 0))
    and ($P{QUERY_PI} is null           or (sdi.pi is not null and instr($P{QUERY_PI}, sdi.pi || '|') > 0))
    and ($P{QUERY_PROJECT} is null      or (sdi.projectid is not null and instr($P{QUERY_PROJECT}, sdi.projectid || '|') > 0))
-   and ($P!{QUERY_INV_STATUS} is null   or inv.status in ($P!{QUERY_INV_STATUS}))
+   and (inv.status in ($P!{QUERY_INV_STATUS}))
  order by sdi.core,
           sdi.fromsdcid,
           sdi.fromkeyid1]]>
@@ -175,6 +184,8 @@
 	<field name="PROJECT_NAME" class="java.lang.String"/>
 	<field name="INVOICE_ID" class="java.lang.String"/>
 	<field name="INVOICE_DATE" class="java.sql.Timestamp"/>
+	<field name="FISCALPERIOD" class="java.lang.String"/>
+	<field name="U_CORECOSTCENTER" class="java.lang.String"/>
 	<field name="INVOICE_STATUS" class="java.lang.String"/>
 	<field name="SERVICE_TASK_ID" class="java.lang.String"/>
 	<field name="SERVICE_TASK_NAME" class="java.lang.String"/>
@@ -184,6 +195,7 @@
 	<field name="BILLABLETOTALCOST" class="java.math.BigDecimal"/>
 	<columnHeader>
 		<band height="14" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<printWhenExpression><![CDATA[new Boolean($V{PAGE_NUMBER}.intValue() == 1)]]></printWhenExpression>
 			<staticText>
 				<reportElement x="0" y="0" width="100" height="14" uuid="ee711677-39b8-438c-a1a0-8f298978f9cb"/>
@@ -297,10 +309,21 @@
 				<reportElement x="2790" y="0" width="520" height="14" uuid="ee2dd6c5-c107-4f96-9b8a-bdc0cfd0a420"/>
 				<text><![CDATA[GRANT_NAME]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="4907" y="0" width="100" height="14" uuid="f56dfd97-128f-4bff-85c3-e082ec0fc3ac">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[FISCALPERIOD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5007" y="0" width="100" height="14" uuid="29c5fd08-7bf0-40dd-9415-2cf14fa5308a"/>
+				<text><![CDATA[U_CORECOSTCENTER]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="14" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="100" height="14" uuid="42fa052e-61e1-4b8b-8ace-dafda12c9864"/>
 				<textFieldExpression><![CDATA[$F{SERVICE_TYPE}]]></textFieldExpression>
@@ -412,6 +435,14 @@
 			<textField isBlankWhenNull="true">
 				<reportElement x="2790" y="0" width="520" height="14" uuid="6ed1822a-1566-4923-a46e-db53c850cc9e"/>
 				<textFieldExpression><![CDATA[$F{GRANT_NAME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4907" y="0" width="100" height="14" uuid="d2929158-091b-4f32-829b-f67c31a194b7"/>
+				<textFieldExpression><![CDATA[$F{FISCALPERIOD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="5007" y="0" width="100" height="14" uuid="251ea75d-8b50-4347-825b-91460450d4c7"/>
+				<textFieldExpression><![CDATA[$F{U_CORECOSTCENTER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -67,7 +67,9 @@
 	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date"/>
 	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
 	<parameter name="STUDY_ID" class="java.lang.String"/>
-	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+        <parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+                <defaultValueExpression><![CDATA["\\\\duhsnas-pri\\home\\bchesnut\\Projects\\Duke Biobank\\LabVantage\\iReports\\Reports\\"]]></defaultValueExpression>
+        </parameter>
 	<queryString>
 		<![CDATA[select study.s_studyid,
        study.studydesc,
@@ -376,17 +378,14 @@ select 'Total Packages Shipped' as rtext,
   from s_package pk
  where pk.sstudyid = $P{STUDY_ID}
    and pk.packagestatus = 'Shipped'
-
-  
    and exists (
     select *
       from sdiaddress a 
      where a.sdcid = 'LV_Package' 
        and a.keyid1 = pk.s_packageid
        and a.contactfunction = 'ShippedBy'
-       and a.functiondt between to_date('01/01/2016','mm/dd/yyyy') and to_date('06/30/2016','mm/dd/yyyy')    )
-       
- 
+       and a.functiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+    )
   union all
     select 'Tissue Collection Success Rate' as rtext,
            170 as rsort,
@@ -402,8 +401,7 @@ select 'Total Packages Shipped' as rtext,
             from s_participant p
                    join s_participantevent pe on pe.participantid = p.s_participantid
            where p.sstudyid = $P{STUDY_ID}
-             and pe.eventdt between to_date('01/01/2016','mm/dd/yyyy') and to_date('06/30/2016','mm/dd/yyyy')
-            
+             and pe.eventdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
              and exists (
                select *
                  from s_eventdefsampletype es
@@ -417,8 +415,7 @@ select 'Total Packages Shipped' as rtext,
             from s_participant p
                    join s_participantevent pe on pe.participantid = p.s_participantid
            where p.sstudyid = $P{STUDY_ID}
-             and pe.eventdt between to_date('01/01/2016','mm/dd/yyyy') and to_date('06/30/2016','mm/dd/yyyy')
-            
+             and pe.eventdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
              and exists (
                select *
                  from s_eventdefsampletype es
@@ -426,7 +423,6 @@ select 'Total Packages Shipped' as rtext,
                 where es.s_eventdefid = pe.eventdefid
                   and st.u_tissueflag = 'Y'
                )
-             
              and exists (
                select *
                  from s_samplefamily sf
@@ -454,7 +450,7 @@ select 'Total Packages Shipped' as rtext,
             from s_participant p
                    join s_participantevent pe on pe.participantid = p.s_participantid
            where p.sstudyid = $P{STUDY_ID}
-             and pe.eventdt between to_date('01/01/2016','mm/dd/yyyy') and to_date('06/30/2016','mm/dd/yyyy')
+             and pe.eventdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
              
              and exists (
                select *
@@ -468,7 +464,7 @@ select 'Total Packages Shipped' as rtext,
             from s_participant p
                    join s_participantevent pe on pe.participantid = p.s_participantid
            where p.sstudyid =$P{STUDY_ID}
-             and pe.eventdt between to_date('01/01/2016','mm/dd/yyyy') and to_date('06/30/2016','mm/dd/yyyy')
+             and pe.eventdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
             
              and exists (
                select *
@@ -488,11 +484,9 @@ select 'Total Packages Shipped' as rtext,
           ) as blood_collected_events
       from dual
   )
-
 )
- where dsu.sysuserid =$P{SAPPHIRE_CurrentUser}
-   and  study.s_studyid =$P{STUDY_ID}
-   
+ where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
+   and  study.s_studyid = $P{STUDY_ID}
  order by rsort]]>
 	</queryString>
 	<field name="S_STUDYID" class="java.lang.String"/>
@@ -561,7 +555,7 @@ select 'Total Packages Shipped' as rtext,
 						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression><![CDATA["cr_bb_brpc_subreport_extparticipantwithdraws.jasper"]]></subreportExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cr_bb_brpc_subreport_extparticipantwithdraws.jasper"]]></subreportExpression>
 				</subreport>
 				<staticText>
 					<reportElement x="1" y="3" width="369" height="27" uuid="fa308305-b511-46bb-90bd-026d12d7afa9"/>
