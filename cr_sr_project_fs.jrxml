@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
+<!-- 2016-08-26T11:36:05 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_sr_project_fs" pageWidth="595" pageHeight="842" columnWidth="565" leftMargin="0" rightMargin="30" topMargin="0" bottomMargin="20" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="b106efec-6a29-4193-a3b0-6c7b81a4bf3d">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="15"/>
 	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LVQA1"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -13,9 +17,9 @@
 		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="QUERY_PI" class="java.lang.String"/>
-	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["\\\\duhsnas-pri\\home\\bchesnut\\Projects\\Duke Biobank\\LabVantage\\iReports\\vml-lvdev-1\\"]]></defaultValueExpression>
-	</parameter>
+	<parameter name="FUND_STATUS" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[select p.s_projectid,
        f.fundsourcedesc,
@@ -27,6 +31,7 @@
   from s_project p
     join u_fundsource f on f.u_fundsourceid = p.u_fundsourceid
  where p.u_pi = $P{QUERY_PI}
+ and ( $P{FUND_STATUS} is null OR f.status = $P{FUND_STATUS} )
  order by f.fundnumber]]>
 	</queryString>
 	<field name="S_PROJECTID" class="java.lang.String"/>

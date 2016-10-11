@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.0.2  -->
+<!-- 2016-09-07T10:37:49 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_participant_reconciliation_consent_data" pageWidth="756" pageHeight="576" columnWidth="756" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LVQA1"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date"/>
+	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
+	<parameter name="STUDY_ID" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\\\duhsnas-pri\\home\\bchesnut\\Projects\\Duke Biobank\\LabVantage\\iReports\\Reports\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select 'Total # Consent Responses' as rtextc,
+       10 as rsortc,
+       to_char(consent_yes + consent_no) as rtotalc
+  from (
+    select (select count(*)
+              from s_participant p
+                join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+             where p.sstudyid = $P{STUDY_ID}
+               and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+               and cp.consentflag = 'Yes') as consent_yes,
+           (select count(*)
+             from s_participant p
+               join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+            where p.sstudyid =$P{STUDY_ID}
+              and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+              and cp.consentflag = 'No') as consent_no
+      from dual
+    )
+union all
+
+Select 'Total # Consents = Yes' as rtextc,
+   20 as rsortc,
+   to_char(count(*)) as rtotalc
+   from s_participant p
+     join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+   where p.sstudyid = $P{STUDY_ID}
+     and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   and cp.consentflag = 'Yes'
+  
+ union all
+Select 'Total # Consents = No' as rtextc,
+   30 as rsortc,
+   to_char(count(*)) as rtotalc
+   from s_participant p
+     join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+   where p.sstudyid =$P{STUDY_ID}
+     and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   and cp.consentflag = 'No'
+
+union all
+
+
+  select '# Consent Withdraws' as rtextc,
+    40 as rsortc,
+   to_char( count(*)) as rtotalc
+    from s_participant p
+     join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+     join u_consent c on c.u_consentid = cp.consentid
+     join s_study s on s.s_studyid = p.sstudyid
+where p.sstudyid =$P{STUDY_ID} and cp.withdrawdt is not NULL
+and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+
+union all
+select 'Consent Success Rate' as rtextc,
+       50 as rsortc,
+       case 
+         when nvl(consent_total,0) = 0 then '0%'
+         else to_char(round(100 * consent_yes / consent_total, 2)) || '%' 
+       end as rtotalc
+  from (
+    select (select count(*)
+              from s_participant p
+                join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+             where p.sstudyid =$P{STUDY_ID}
+               and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+               and cp.consentflag = 'Yes') as consent_yes,
+           (select count(*)
+             from s_participant p
+               join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+            where p.sstudyid = $P{STUDY_ID}
+              and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+              and cp.consentflag in ('Yes', 'No')) as consent_total
+      from dual
+    )
+
+
+union all
+select '# Participants Enrolled' as rtextc,
+   60 as rsortc,
+   to_char(count(*)) as rtotalc
+   from s_participant p
+    where p.sstudyid=$P{STUDY_ID}
+    and p.enrolldt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+    and p.participantstatus='Enrolled'
+union all
+select '# Participants Complete' as rtextc,
+   70 as rsortc,
+   to_char(count(*)) as rtotalc
+   from s_participant p
+    where p.sstudyid=$P{STUDY_ID}
+    and p.enrolldt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+    and p.participantstatus='Complete'
+union all
+select '# Participants Withdrawn' as rtextc,
+   80 as rsortc,
+   to_char(count(*)) as rtotalc
+   from s_participant p
+    where p.sstudyid=$P{STUDY_ID}
+    and p.enrolldt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+    and p.participantstatus='Withdrawn'
+
+ order by rsortc]]>
+	</queryString>
+	<field name="RTEXTC" class="java.lang.String"/>
+	<field name="RSORTC" class="java.math.BigDecimal"/>
+	<field name="RTOTALC" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="14" uuid="a2e5609d-de7f-4cb2-a1ab-02d58ee89334"/>
+				<text><![CDATA[Consent Data]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="272" y="0" width="100" height="14" uuid="c27add5c-e95d-42ed-b0f0-dcdcaba17f58">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Consent Totals]]></text>
+			</staticText>
+			<line>
+				<reportElement x="3" y="14" width="497" height="1" uuid="3680f47b-9859-4495-acbc-d1f7d2e3a179"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="2" width="200" height="14" uuid="f8dc3df5-3101-49c3-a78a-4a3a92493d94">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{RTEXTC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="272" y="0" width="100" height="14" uuid="45d26cb5-280c-440b-9240-6c69859ddb83">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{RTOTALC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="10" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</band>
+	</pageFooter>
+</jasperReport>

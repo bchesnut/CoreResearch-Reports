@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-07-25T14:15:48 -->
+<!-- 2016-10-11T14:56:58 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_brpc_balanced_scorecard" pageWidth="612" pageHeight="792" columnWidth="576" leftMargin="18" rightMargin="18" topMargin="18" bottomMargin="18" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -69,247 +69,123 @@
 	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
 	<parameter name="STUDY_ID" class="java.lang.String"/>
 	<parameter name="SHIPTO_ID" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["\\\\duhsnas-pri\\home\\bchesnut\\Projects\\Duke Biobank\\LabVantage\\Reports\\CoreResearch-Reports\\"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[select study.s_studyid,
        study.studydesc,
        d.departmentid,
        d.departmentdesc,
-       sysuser.sysuserdesc,
-       rtext,
-       rsort,
-       rtotal
+       sysuser.sysuserdesc
   from s_study study
     join department d on d.departmentid = study.securitydepartment
     join departmentsysuser dsu on dsu.departmentid = d.departmentid
-    join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid,
-       (
-select 'Total # Consent Responses' as rtext,
-       10 as rsort,
-       to_char(consent_yes + consent_no) as rtotal
-  from (
-    select (select count(*)
-              from s_participant p
-                join u_consentparticipntmap cp on p.s_participantid = cp.participantid
-             where p.sstudyid = $P{STUDY_ID}
-               and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-               and cp.consentflag = 'Yes') as consent_yes,
-           (select count(*)
-             from s_participant p
-               join u_consentparticipntmap cp on p.s_participantid = cp.participantid
-            where p.sstudyid = $P{STUDY_ID}
-              and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-              and cp.consentflag = 'No') as consent_no
-      from dual
-    )
-union all
-select 'Consent Success Rate' as rtext,
-       20 as rsort,
-       case 
-         when nvl(consent_total,0) = 0 then '0%'
-         else to_char(round(100 * consent_yes / consent_total, 2)) || '%' 
-       end as rtotal
-  from (
-    select (select count(*)
-              from s_participant p
-                join u_consentparticipntmap cp on p.s_participantid = cp.participantid
-             where p.sstudyid =$P{STUDY_ID}
-               and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-               and cp.consentflag = 'Yes') as consent_yes,
-           (select count(*)
-             from s_participant p
-               join u_consentparticipntmap cp on p.s_participantid = cp.participantid
-            where p.sstudyid = $P{STUDY_ID}
-              and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-              and cp.consentflag in ('Yes', 'No')) as consent_total
-      from dual
-    )
-union all
-select '# Whole Blood Samples Collected' as rtext,
-       30 as rsort,
-       to_char(count(*)) as rtotal
-  from s_samplefamily sf
-    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
-    join s_participant p on p.s_participantid = sf.participantid
- where p.sstudyid = $P{STUDY_ID}
-   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-   )
-   and s.sampletypeid in ('Whole Blood', 'WHOLE BLOOD')
-union all
-select '# Tissue Samples Collected' as rtext,
-       40 as rsort,
-       to_char(count(*)) as rtotal
-  from s_samplefamily sf
-    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
-    join s_participant p on p.s_participantid = sf.participantid
-    join s_sampletype st on st.s_sampletypeid = s.sampletypeid
- where p.sstudyid = $P{STUDY_ID}
-   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-   )
-   and st.u_tissueflag = 'Y'
-union all
-select 'Total Samples Collected' as rtext,
-       50 as rsort,
-       to_char(count(*)) as rtotal
-  from s_samplefamily sf
-    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
-    join s_participant p on p.s_participantid = sf.participantid
- where p.sstudyid = $P{STUDY_ID}
-   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-   )
-union all
-select 'Total Tissue Samples Collected' as rtext,
-       60 as rsort,
-       to_char(count(*)) as rtotal
-  from s_participant p
- where p.sstudyid = $P{STUDY_ID}
-   and exists (
-    select *
-      from s_samplefamily sf
-        join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
-        join s_sampletype st on st.s_sampletypeid = s.sampletypeid
-     where sf.participantid = p.s_participantid
-	   and (sf.collectiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-	   	 or s.collectiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-	   )
-       and st.u_tissueflag = 'Y'
-    )
-union all
-select '# Participants with Collection Failures' as rtext,
-       70 as rsort,
-       to_char(count(*)) as rtotal
-  from s_participant p
- where exists (
-     select *
-       from s_participantevent pe
-         join u_collectionfailure cf on cf.s_participanteventid = pe.s_participanteventid
-      where pe.participantid = p.s_participantid
-        and cf.createdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-     )
-union all
-select 'Total # Collection Failures' as rtext,
-       80 as rsort,
-       to_char(count(*)) as rtotal
-  from s_participant p
-    join s_participantevent pe on pe.participantid = p.s_participantid
-    join u_collectionfailure cf on cf.s_participanteventid = pe.s_participanteventid
- where cf.createdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-union all
-select '# RNA Samples' as rtext,
-       90 as rsort,
-       to_char(count(*)) as rtotal
-  from s_participant p
-    join s_samplefamily sf on sf.participantid = p.s_participantid
-    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
- where p.sstudyid = $P{STUDY_ID}
-   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-   )
-   and s.sampletypeid in  ('Total RNA', 'TOTAL RNA')
-   and s.confirmeddt is not null
-union all
-select '# RNA Samples passing QC' as rtext,
-       100 as rsort,
-       to_char(count(*)) as rtotal
-  from (
-	select nvl(sds.condition, 'Pass') as condition,
-	       dense_rank() over (partition by sds.keyid1 order by sds.dataset desc) as spec_rank
-	  from s_participant p
-	    join s_samplefamily sf on sf.participantid = p.s_participantid
-	    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
-	    join sdidataitemspec sds on sds.sdcid = 'Sample' and sds.keyid1 = s.s_sampleid
-	 where p.sstudyid = $P{STUDY_ID}
-	   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-	   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-	   )
-	   and s.sampletypeid in  ('Total RNA', 'TOTAL RNA')
-	   and s.confirmeddt is not null
-	   and sds.paramlistid = 'RNA Quant'
-	   and sds.paramid = 'OD 260/280'
-	 )
-  where condition = 'Pass'
-    and spec_rank = 1
-union all
-select '# DNA Samples' as rtext,
-       110 as rsort,
-       to_char(count(*)) as rtotal
-  from s_participant p
-    join s_samplefamily sf on sf.participantid = p.s_participantid
-    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
- where p.sstudyid = $P{STUDY_ID}
-   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-   )
-   and s.sampletypeid = 'DNA'
-   and s.confirmeddt is not null
-union all
-select '# DNA Samples passing QC' as rtext,
-       120 as rsort,
-       to_char(count(*)) as rtotal
-  from (
-	select nvl(sds.condition, 'Pass') as condition,
-	       dense_rank() over (partition by sds.keyid1 order by sds.dataset desc) as spec_rank
-	  from s_participant p
-	    join s_samplefamily sf on sf.participantid = p.s_participantid
-	    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
-	    join sdidataitemspec sds on sds.sdcid = 'Sample' and sds.keyid1 = s.s_sampleid
-	 where p.sstudyid = $P{STUDY_ID}
-	   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-	   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-	   )
-	   and s.sampletypeid in  ('DNA')
-	   and s.confirmeddt is not null
-	   and sds.paramlistid = 'DNA Quant'
-	   and sds.paramid = 'OD 260/280'
-	 )
-  where condition = 'Pass'
-    and spec_rank = 1
-union all
-select '# Whole Blood Samples' as rtext,
-       130 as rsort,
-       to_char(count(*)) as rtotal
-  from s_participant p
- where p.sstudyid = $P{STUDY_ID}
-   and exists (
-select *
-  from s_samplefamily sf
-    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
-    join s_sampletype st on st.s_sampletypeid = s.sampletypeid
- where sf.participantid = p.s_participantid
-   and sf.collectiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-   and s.sampletypeid in ('Whole Blood', 'WHOLE BLOOD')
-)
-union all
-select 'Total Packages Shipped' as rtext,
-       140 as rsort,
-       to_char(count(*)) as rtotal
-  from s_package pk
- where pk.sstudyid = $P{STUDY_ID}
-   and pk.packagestatus = 'Shipped'
-   and pk.recipientdepartmentid = $P{SHIPTO_ID}
-   and exists (
-    select *
-      from sdiaddress a 
-     where a.sdcid = 'LV_Package' 
-       and a.keyid1 = pk.s_packageid
-       and a.contactfunction = 'ShippedBy'
-       and a.functiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
-    )
-)
+    join sysuser sysuser on sysuser.sysuserid = dsu.sysuserid
  where dsu.sysuserid = $P{SAPPHIRE_CurrentUser}
-   and study.s_studyid = $P{STUDY_ID}
- order by rsort]]>
+   and instr($P{STUDY_ID} || ';', study.s_studyid || ';') > 0
+ order by study.studydesc]]>
 	</queryString>
 	<field name="S_STUDYID" class="java.lang.String"/>
 	<field name="STUDYDESC" class="java.lang.String"/>
 	<field name="DEPARTMENTID" class="java.lang.String"/>
 	<field name="DEPARTMENTDESC" class="java.lang.String"/>
 	<field name="SYSUSERDESC" class="java.lang.String"/>
-	<field name="RTEXT" class="java.lang.String"/>
-	<field name="RSORT" class="java.math.BigDecimal"/>
-	<field name="RTOTAL" class="java.lang.String"/>
+	<group name="STUDY_ID">
+		<groupExpression><![CDATA[$F{S_STUDYID}]]></groupExpression>
+		<groupHeader>
+			<band height="71">
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement key="textCurrentUser" x="0" y="0" width="370" height="14" uuid="e2c1beb4-f018-4e50-9b79-9d0826cd467d"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Study Name: " + $F{STUDYDESC}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement key="textCurrentUser" x="0" y="14" width="370" height="14" uuid="08b9c8d6-9f44-4113-a2fe-4ea292e5a1a8"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Shipping Location: " + ($P{SHIPTO_ID} == null || $P{SHIPTO_ID}.isEmpty() ? "" : $P{SHIPTO_ID})]]></textFieldExpression>
+				</textField>
+				<subreport>
+					<reportElement x="0" y="40" width="574" height="23" uuid="4b23c36c-a7e2-44fe-9978-f2758aeb714c"/>
+					<subreportParameter name="SAPPHIRE_START_DATE">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_START_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_END_DATE">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_END_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SHIPTO_ID">
+						<subreportParameterExpression><![CDATA[$P{SHIPTO_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="STUDY_ID">
+						<subreportParameterExpression><![CDATA[$F{S_STUDYID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_CurrentUser">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_CurrentUser}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_ReportRoot">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_ReportRoot}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_ReportPath">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_ReportPath}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_SDCID">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_SDCID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_KEYID1List">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_KEYID1List}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_KEYID1">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_KEYID1}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_KEYID2">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_KEYID2}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_KEYID3">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_KEYID3}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_ReportID">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_ReportID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_ReportVersion">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_ReportVersion}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_ReportTitle">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_ReportTitle}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_DatabaseName">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_DatabaseName}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SAPPHIRE_ReportEventID">
+						<subreportParameterExpression><![CDATA[$P{SAPPHIRE_ReportEventID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cr_bb_brpc_balanced_scorecard_subreport.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="13"/>
+		</groupFooter>
+	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -317,7 +193,7 @@ select 'Total Packages Shipped' as rtext,
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="160" splitType="Stretch">
+		<band height="121" splitType="Stretch">
 			<staticText>
 				<reportElement key="staticText" x="0" y="14" width="576" height="20" uuid="ea333cfd-5f54-4c35-8ecb-4739cba897c0"/>
 				<box>
@@ -379,19 +255,6 @@ select 'Total Packages Shipped' as rtext,
 				</textElement>
 				<textFieldExpression><![CDATA["Generated By: " + $F{SYSUSERDESC}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textCurrentUser" x="0" y="104" width="370" height="14" uuid="a407699a-09e6-4579-84e8-63616b2137b8"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement>
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Core Name: " + $F{DEPARTMENTDESC}]]></textFieldExpression>
-			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textReport" x="0" y="81" width="370" height="14" uuid="bfb13c24-d9b1-4534-9dad-374e773719da"/>
 				<box>
@@ -406,7 +269,7 @@ select 'Total Packages Shipped' as rtext,
 				<textFieldExpression><![CDATA["Input Date Range: " + new SimpleDateFormat("MM/dd/yyyy").format($P{SAPPHIRE_START_DATE}) + " to " + new SimpleDateFormat("MM/dd/yyyy").format($P{SAPPHIRE_END_DATE})]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textCurrentUser" x="0" y="118" width="370" height="14" uuid="e2c1beb4-f018-4e50-9b79-9d0826cd467d"/>
+				<reportElement key="textCurrentUser" x="0" y="95" width="370" height="14" uuid="a407699a-09e6-4579-84e8-63616b2137b8"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -416,20 +279,7 @@ select 'Total Packages Shipped' as rtext,
 				<textElement>
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Study Name: " + $F{STUDYDESC}]]></textFieldExpression>
-			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textCurrentUser" x="0" y="132" width="370" height="14" uuid="08b9c8d6-9f44-4113-a2fe-4ea292e5a1a8"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement>
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Shipping Location: " + ($P{SHIPTO_ID} == null || $P{SHIPTO_ID}.isEmpty() ? "" : $P{SHIPTO_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Core Name: " + $F{DEPARTMENTDESC}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -439,21 +289,7 @@ select 'Total Packages Shipped' as rtext,
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="16" splitType="Stretch">
-			<textField>
-				<reportElement x="1" y="0" width="209" height="14" uuid="c3678d6c-3883-4697-92a5-5d58bccf7e62">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<textFieldExpression><![CDATA[$F{RTEXT}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="210" y="0" width="71" height="14" uuid="6373bf8a-39f4-4a48-9eb6-11a6e24891c8">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{RTOTAL}]]></textFieldExpression>
-			</textField>
-		</band>
+		<band splitType="Stretch"/>
 	</detail>
 	<columnFooter>
 		<band splitType="Stretch"/>

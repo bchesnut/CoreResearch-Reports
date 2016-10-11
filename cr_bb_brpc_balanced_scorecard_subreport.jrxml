@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-10-11T14:51:54 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cr_bb_brpc_balanced_scorecard" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="sapphire.report.JasperReportScriptlet" uuid="18083936-3bd0-4b3c-a380-3386c1d96503">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="lvqa1"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="EvenOddBackground" forecolor="#000000">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 ==  1)]]></conditionExpression>
+			<style forecolor="#000000" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SAPPHIRE_CurrentUser" class="java.lang.String">
+		<parameterDescription><![CDATA[Current Sapphire SYSUSERID]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<currentuser>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportRoot" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Root Folder where Report Files are Stored]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportPath" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Folder where this Report File is located]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_SDCID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[SDCID for this report]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1List" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[list of KeyIDs in format 'asdf','asdf',etc or a subselect]]></parameterDescription>
+		<defaultValueExpression><![CDATA["'EnterTestIDHere'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID1" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_KEYID3" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[keyid list in format ID1','ID2',...,'IDn]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[KeyID of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<Report1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportVersion" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Version Number of the Report SDI]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<1>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportTitle" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Title of the Report SDI.  Comes from the Description]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<ReportTitle>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_DatabaseName" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Name of the Sapphire Database Connection]]></parameterDescription>
+		<defaultValueExpression><![CDATA["<databaseName>"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SAPPHIRE_ReportEventID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[ID of the Report Event for Controlled Reports]]></parameterDescription>
+	</parameter>
+	<parameter name="SAPPHIRE_START_DATE" class="java.util.Date"/>
+	<parameter name="SAPPHIRE_END_DATE" class="java.util.Date"/>
+	<parameter name="STUDY_ID" class="java.lang.String"/>
+	<parameter name="SHIPTO_ID" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["\\\\duhsnas-pri\\home\\bchesnut\\Projects\\Duke Biobank\\LabVantage\\Reports\\CoreResearch-Reports\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select 
+       rtext,
+       rsort,
+       rtotal
+  from 
+       (
+select 'Total # Consent Responses' as rtext,
+       10 as rsort,
+       to_char(consent_yes + consent_no) as rtotal
+  from (
+    select (select count(*)
+              from s_participant p
+                join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+             where p.sstudyid = $P{STUDY_ID}
+               and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+               and cp.consentflag = 'Yes') as consent_yes,
+           (select count(*)
+             from s_participant p
+               join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+            where p.sstudyid = $P{STUDY_ID}
+              and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+              and cp.consentflag = 'No') as consent_no
+      from dual
+    )
+union all
+select 'Consent Success Rate' as rtext,
+       20 as rsort,
+       case 
+         when nvl(consent_total,0) = 0 then '0%'
+         else to_char(round(100 * consent_yes / consent_total, 2)) || '%' 
+       end as rtotal
+  from (
+    select (select count(*)
+              from s_participant p
+                join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+             where p.sstudyid =$P{STUDY_ID}
+               and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+               and cp.consentflag = 'Yes') as consent_yes,
+           (select count(*)
+             from s_participant p
+               join u_consentparticipntmap cp on p.s_participantid = cp.participantid
+            where p.sstudyid = $P{STUDY_ID}
+              and cp.consenteddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+              and cp.consentflag in ('Yes', 'No')) as consent_total
+      from dual
+    )
+union all
+select '# Whole Blood Samples Collected' as rtext,
+       30 as rsort,
+       to_char(count(*)) as rtotal
+  from s_samplefamily sf
+    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
+    join s_participant p on p.s_participantid = sf.participantid
+ where p.sstudyid = $P{STUDY_ID}
+   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   )
+   and s.sampletypeid in ('Whole Blood', 'WHOLE BLOOD')
+union all
+select '# Tissue Samples Collected' as rtext,
+       40 as rsort,
+       to_char(count(*)) as rtotal
+  from s_samplefamily sf
+    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
+    join s_participant p on p.s_participantid = sf.participantid
+    join s_sampletype st on st.s_sampletypeid = s.sampletypeid
+ where p.sstudyid = $P{STUDY_ID}
+   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   )
+   and st.u_tissueflag = 'Y'
+union all
+select 'Total Samples Collected' as rtext,
+       50 as rsort,
+       to_char(count(*)) as rtotal
+  from s_samplefamily sf
+    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
+    join s_participant p on p.s_participantid = sf.participantid
+ where p.sstudyid = $P{STUDY_ID}
+   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   )
+union all
+select 'Total Tissue Samples Collected' as rtext,
+       60 as rsort,
+       to_char(count(*)) as rtotal
+  from s_participant p
+ where p.sstudyid = $P{STUDY_ID}
+   and exists (
+    select *
+      from s_samplefamily sf
+        join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
+        join s_sampletype st on st.s_sampletypeid = s.sampletypeid
+     where sf.participantid = p.s_participantid
+	   and (sf.collectiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+	   	 or s.collectiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+	   )
+       and st.u_tissueflag = 'Y'
+    )
+union all
+select '# Participants with Collection Failures' as rtext,
+       70 as rsort,
+       to_char(count(*)) as rtotal
+  from s_participant p
+ where exists (
+     select *
+       from s_participantevent pe
+         join u_collectionfailure cf on cf.s_participanteventid = pe.s_participanteventid
+      where pe.participantid = p.s_participantid
+        and cf.createdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+     )
+union all
+select 'Total # Collection Failures' as rtext,
+       80 as rsort,
+       to_char(count(*)) as rtotal
+  from s_participant p
+    join s_participantevent pe on pe.participantid = p.s_participantid
+    join u_collectionfailure cf on cf.s_participanteventid = pe.s_participanteventid
+ where cf.createdt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+union all
+select '# RNA Samples' as rtext,
+       90 as rsort,
+       to_char(count(*)) as rtotal
+  from s_participant p
+    join s_samplefamily sf on sf.participantid = p.s_participantid
+    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
+ where p.sstudyid = $P{STUDY_ID}
+   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   )
+   and s.sampletypeid in  ('Total RNA', 'TOTAL RNA')
+   and s.confirmeddt is not null
+union all
+select '# RNA Samples passing QC' as rtext,
+       100 as rsort,
+       to_char(count(*)) as rtotal
+  from (
+	select nvl(sds.condition, 'Pass') as condition,
+	       dense_rank() over (partition by sds.keyid1 order by sds.dataset desc) as spec_rank
+	  from s_participant p
+	    join s_samplefamily sf on sf.participantid = p.s_participantid
+	    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
+	    join sdidataitemspec sds on sds.sdcid = 'Sample' and sds.keyid1 = s.s_sampleid
+	 where p.sstudyid = $P{STUDY_ID}
+	   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+	   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+	   )
+	   and s.sampletypeid in  ('Total RNA', 'TOTAL RNA')
+	   and s.confirmeddt is not null
+	   and sds.paramlistid = 'RNA Quant'
+	   and sds.paramid = 'OD 260/280'
+	 )
+  where condition = 'Pass'
+    and spec_rank = 1
+union all
+select '# DNA Samples' as rtext,
+       110 as rsort,
+       to_char(count(*)) as rtotal
+  from s_participant p
+    join s_samplefamily sf on sf.participantid = p.s_participantid
+    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
+ where p.sstudyid = $P{STUDY_ID}
+   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   )
+   and s.sampletypeid = 'DNA'
+   and s.confirmeddt is not null
+union all
+select '# DNA Samples passing QC' as rtext,
+       120 as rsort,
+       to_char(count(*)) as rtotal
+  from (
+	select nvl(sds.condition, 'Pass') as condition,
+	       dense_rank() over (partition by sds.keyid1 order by sds.dataset desc) as spec_rank
+	  from s_participant p
+	    join s_samplefamily sf on sf.participantid = p.s_participantid
+	    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
+	    join sdidataitemspec sds on sds.sdcid = 'Sample' and sds.keyid1 = s.s_sampleid
+	 where p.sstudyid = $P{STUDY_ID}
+	   and (s.receiveddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+	   	 or s.confirmeddt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+	   )
+	   and s.sampletypeid in  ('DNA')
+	   and s.confirmeddt is not null
+	   and sds.paramlistid = 'DNA Quant'
+	   and sds.paramid = 'OD 260/280'
+	 )
+  where condition = 'Pass'
+    and spec_rank = 1
+union all
+select '# Whole Blood Samples' as rtext,
+       130 as rsort,
+       to_char(count(*)) as rtotal
+  from s_participant p
+ where p.sstudyid = $P{STUDY_ID}
+   and exists (
+select *
+  from s_samplefamily sf
+    join s_sample s on s.samplefamilyid = sf.s_samplefamilyid
+    join s_sampletype st on st.s_sampletypeid = s.sampletypeid
+ where sf.participantid = p.s_participantid
+   and sf.collectiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+   and s.sampletypeid in ('Whole Blood', 'WHOLE BLOOD')
+)
+union all
+select 'Total Packages Shipped' as rtext,
+       140 as rsort,
+       to_char(count(*)) as rtotal
+  from s_package pk
+ where pk.sstudyid = $P{STUDY_ID}
+   and pk.packagestatus = 'Shipped'
+   and pk.recipientdepartmentid = $P{SHIPTO_ID}
+   and exists (
+    select *
+      from sdiaddress a 
+     where a.sdcid = 'LV_Package' 
+       and a.keyid1 = pk.s_packageid
+       and a.contactfunction = 'ShippedBy'
+       and a.functiondt between $P{SAPPHIRE_START_DATE} and trunc($P{SAPPHIRE_END_DATE}) + 1 - 1/24/60/60
+    )
+)
+ order by rsort]]>
+	</queryString>
+	<field name="RTEXT" class="java.lang.String"/>
+	<field name="RSORT" class="java.math.BigDecimal"/>
+	<field name="RTOTAL" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="0" width="209" height="14" uuid="c3678d6c-3883-4697-92a5-5d58bccf7e62">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{RTEXT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="0" width="71" height="14" uuid="6373bf8a-39f4-4a48-9eb6-11a6e24891c8">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{RTOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
